@@ -1,0 +1,82 @@
+中文帮助文档
+//以下排序仅按心情
+
+0 项目结构
+本项目分为三个模块  
+ .发送消息层 : 本地玩家通过按键向服务器发送消息
+ .接收消息层 : 接收服务器发来的消息
+ .渲染层     : 根据接收到的消息修改游戏显示内容
+
+具体实现
+ 我们使用 Player类来储存每个玩家的信息，并接收服务器发来的消息。
+ 我们为每一个玩家建立一个Player类对象，如player1，player2
+ 同时我们建立一个全局map，Players（注意多了s）,包含了所有player，即
+    map<string, Player*> Players;
+    值键对为 玩家名字 —— player*
+ 每次接收消息时，会根据玩家姓名将消息存储到对应的player对象里
+ 
+然后 渲染层（可以理解为场景） 每一帧（大概每0.016s）刷新一次，根据每个player里面的消息更新游戏画面
+例如刷新人物移动
+for (auto it = Players.begin(); it != Players.end(); ++it)  //遍历玩家
+	{
+		auto player = it->second;
+    //判断是否死亡
+		if (player->m_bdead) continue；
+    //判断是否有消息
+		if (player->msg_walk_pos != Vec2(0, 0))
+		{
+			auto sprite = player->m_sprite;
+			//判断可否移动
+			cocos2d::Vec2 pos = sprite->getPosition();
+			pos = pos + player->msg_walk_pos;
+			if (m_map->bnoMove(pos)) continue;
+			//精灵移动
+			auto moveBy = cocos2d::MoveBy::create(sprite->m_speed, player->msg_walk_pos);
+			sprite->runAction(moveBy);
+			//重置信息
+			player->msg_walk_pos = Vec2(0, 0);
+		}
+	}
+  
+发送消息层和接收消息层已经封装好，不需要了解具体细节即可使用
+
+下面重点讲讲渲染层
+1 地图
+在本项目中，我们使用MyMap类处理游戏地图
+MyMap继承自TMXTiledMap类
+首先制作一张地图（推荐使用Tiled制作）
+地图要求
+  （0） 地图大小为26*20 个图块，每个图块40*40 像素
+  （1） 至少包含4个图块层
+              . background
+              . building
+              . remove
+              . nomove
+  （2）  nomove层摆放对应图块（简称 n图块），表示此处不可移动
+  （3）  remove层摆放对应图块（简称 r图块），表示被炸时此处对应的 n图块，r图块，b图块（building层对应图块），
+               以及在b图块上方的一个b图块会被移除。因为我们约定一个可以被移除的物体是40*80像素，即对应两个图块。
+   (4)  在remove nomove层（0，0）处需摆放相应图块，不然会报错（用于MyMap初始化）
+
+使用MyMap类在游戏中加载地图
+
+auto map=MyMap::create("map/WaitHouse/WaitHouse.tmx"); // 创建地图,需要一个形参，地图文件路径
+map->init(); //初始化
+scene->addChild(map,0); //加入场景
+
+游戏中就会显示你制作出来的地图啦
+
+2 人物和炸弹
+在本项目中，我们使用MySprite类和MyBomb类处理游戏中人物和炸弹
+两者都继承自Sprite类
+使用
+
+auto bomb = MyBomb::create(sprite,scene,map);//创建炸弹，需要三个形参 人物，场景，地图
+bomb->plantBomb(pos); //炸弹摆放，需要一个形参，炸弹摆放位置  
+scene->addChild(bomb); //加入场景
+
+创建的炸弹会根据sprite中的图片创建炸弹动画，并在炸弹位置向地图添加nomove层图块，3s后炸弹爆炸，根据sprite中图片创建炸弹水花，
+将去掉爆炸范围内 地图的remove层，并去掉炸弹位置的nomove层
+
+人物的创建和使用类似，不再赘述
+
+ps 当然，以上还是整个代码很小的一部分，里面还有许多东西实在无法讲述清楚（代码结构还比较混乱，思路还不是很好，以及一些早期代码还未重构）
