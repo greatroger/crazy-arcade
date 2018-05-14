@@ -1,6 +1,14 @@
 中文帮助文档
 //以下排序仅按心情
 
+-1 使用
+   . 新建一个cocos2d项目
+   . 下载Classes，Resource文件夹，覆盖新项目中的Classes，Resource文件夹
+     （注意，覆盖前先将Classes子文件夹中所有文件copy出来，全部放到Classes里面）
+   . 下载json，添加json库（详情见json/readme)
+   . 打开项目，添加Classes中所有代码文件
+   . 编译运行，等待10分钟，你可以喝杯茶~~
+   
 0 项目结构
 本项目分为三个模块  
  .发送消息层 : 本地玩家通过按键向服务器发送消息
