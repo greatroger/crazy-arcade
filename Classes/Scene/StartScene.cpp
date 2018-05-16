@@ -11,15 +11,16 @@ StartScene::~StartScene()
 
 bool StartScene::init()
 {
-	addBackground();
-	addButton();
+	//addBackground();
+	//addButton();
 	return true;
 }
 
 void StartScene::addBackground()
 {
 	auto visiblesize = Director::getInstance()->getVisibleSize();
-	auto background = Sprite::create("");
+
+	auto background = Sprite::create(" ");
 	assert(background != nullptr);
 	background->setPosition(visiblesize.width / 2, visiblesize.height / 2);
 	addChild(background,-1);
