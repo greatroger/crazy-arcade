@@ -1,6 +1,14 @@
-#include"StartScene.h"
+#include"Scene/StartScene.h"
+#include"Scene/RoomScene.h"
+#include"Scene/LoginScene.h"
 #include"Scene/HelpScene.h"
+#include"Scene/SettingScene.h"
+#include "SimpleAudioEngine.h"
+#include"Scene/HelpScene.h"
+#include"Global/Global.h"
+
 USING_NS_CC;
+using namespace CocosDenshion;
 
 StartScene::StartScene()
 {
@@ -12,6 +20,10 @@ StartScene::~StartScene()
 
 bool StartScene::init()
 {
+	if (Setting::musicSwitch)
+	{
+		SimpleAudioEngine::getInstance()->playBackgroundMusic("Sound/mainScene.mp3", true);
+	}
 	addBackground();
 	addButton();
 	return true;
@@ -21,7 +33,7 @@ void StartScene::addBackground()
 {
 	auto visiblesize = Director::getInstance()->getVisibleSize();
 
-	auto background = Sprite::create("background1.jpg");
+	auto background = Sprite::create("Scene/Start/background.jpg");
 	assert(background != nullptr);
 	background->setPosition(visiblesize.width / 2, visiblesize.height / 2);
 	background->setScale(1.55f);
@@ -31,12 +43,12 @@ void StartScene::addBackground()
 
 void StartScene::menuPlayCallback(cocos2d::Ref * pSender) 
 {
-	//Director::getInstance()->pushScene(TransitionFade::create(1, RoomScene::create()));
+	Director::getInstance()->replaceScene(TransitionFade::create(1, LoginScene::create()));
 }
 
 void StartScene::menuSettingsCallback(cocos2d::Ref * pSender) 
 {
-	//Director::getInstance()->pushScene(TransitionFade::create(1, SettingsScene::create()));
+	Director::getInstance()->pushScene(TransitionFade::create(1, SettingScene::create()));
 }
 void StartScene::menuHelpCallback(cocos2d::Ref * pSender)
 {

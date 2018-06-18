@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
 #include"Scene/LoadingScene.h"
+#include <tchar.h>
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -56,6 +57,11 @@ static int register_all_packages()
 
 bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
+
+	_tsetlocale(LC_ALL, _T(""));
+	::AllocConsole();
+	::freopen("conout$", "w", stdout); //ÏÔÊ¾¿ØÖÆÌ¨
+
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
@@ -69,7 +75,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // turn on display FPS
     director->setDisplayStats(true);
-	director->setDisplayStats(false);
+//	director->setDisplayStats(false);
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60);
 

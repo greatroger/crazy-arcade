@@ -26,6 +26,8 @@ bool LoadingScene::init()
 bool LoadingScene::load()
 {
 	//load something
+	void MsgLoad();
+	MsgLoad();
 	return true;
 }
 
@@ -47,7 +49,7 @@ void LoadingScene::addBackground()
 		label->getContentSize().height));
 
 	this->addChild(label, -1);
-
+	
 	//create loadingbar
 	auto sprite = Sprite::create("Scene/Loading/loading bar.jpg");
 	assert(sprite != nullptr);
