@@ -42,9 +42,15 @@ void SettingScene::addButton()
 	std::vector<MenuItem *> items =
 	{
 		m_music=MenuItemLabel::create(
-			Label::createWithTTF("On", "Fonts/Quicksand-Bold.ttf",size),
+			Label::createWithTTF("", "Fonts/Quicksand-Bold.ttf",size),
 			CC_CALLBACK_1(SettingScene::menuMusicOnCallback, this))
 	};
+	if (Setting::musicSwitch)
+		m_music->setString("On");
+	else
+		m_music->setString("Off");
+
+
 	auto menu = Menu::create();
 	menu->setPosition(0, 0);
 	items[0]->setPosition(950,580);
@@ -87,6 +93,5 @@ void SettingScene::createBackButton()
 
 void SettingScene::menuBackCallback(cocos2d::Ref * pSender)
 {
-//	Director::getInstance()->replaceScene(TransitionFade::create(1, StartScene::create()));
-	Director::getInstance()->popScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(0.6, StartScene::create()));
 }

@@ -1,4 +1,4 @@
-#include "Object/Bomb.h"
+#include "Bomb.h"
 #include"Global/Global.h"
 #include"Network/Msg.h"
 #include"Object/Pop.h"
@@ -65,7 +65,13 @@ void Bomb::explode()
 			m_map->removeNomove(pos);
 			break;
 		}
-	}  
+	} 
+
+	//破坏地图物体
+	if (m_map->ifCanDamage(pos)) {
+		m_map->damage(pos);
+	}
+
 	m_player->addBombNum(-1);
 
 	//一个炸弹的四个方向的爆炸
@@ -101,14 +107,20 @@ void Bomb::Remove(int a, int b)
 		}
 
 		//破坏地图物体
-		if (m_map->ifCanDamage(pos)){
-			m_map->damage(pos);
-			creatWater(pos);
+		if (!m_map->ifCanMove(pos))
+		{
+			if (m_map->ifCanDamage(pos)) {
+				m_map->damage(pos);
+				creatWater(pos);
+			}
 			break;
 		}
-		else
-			if (!m_map->ifCanMove(pos)) break;
-		creatWater(pos);
+		else {
+			if (m_map->ifCanDamage(pos)) {
+				m_map->damage(pos);
+			}
+			creatWater(pos);
+		}
 	}
 }
 
@@ -117,7 +129,7 @@ void Bomb::creatWater(Vec2 pos) //制作水花
 	auto water = Sprite::create(m_picWater);
 	water->setPosition(Vec2(pos.x, pos.y));
 	m_map->addChild(water,5);
-	auto act1 = DelayTime::create(0.5f);
+	auto act1 = DelayTime::create(0.3f);
 	auto act2 = CallFunc::create([water]() {
 		water->removeFromParent();
 	});
@@ -129,10 +141,10 @@ void Bomb::hurtPlayer(Vec2 pos)
 	for (auto it = Player::Players.begin(); it != Player::Players.end(); ++it)
 	{
 		auto player = it->second;
-		Vec2 playerpos = player->getPostion();
+		Vec2 playerpos = player->getPosition();
 		float distance = (abs(playerpos.x - pos.x) + abs(playerpos.y - pos.y)) / 2;
 
-		if (distance>10) continue;
+		if (distance>5) continue;
 		if (player->isgold)continue;
 		if (player->isinpop)continue;
 

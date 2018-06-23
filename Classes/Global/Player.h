@@ -1,8 +1,8 @@
 #pragma once
 #include"cocos2d.h"
-#include"Object/MyMap.h"
+#include"Object/Map/MyMap.h"
 
-class Player
+class Player:public cocos2d::Node
 {
 public:
 	static std::map<std::string, Player*> Players;
@@ -11,6 +11,9 @@ public:
 
 	Player(const std::string& name);
 	~Player();
+	void update(float det);
+	bool init();
+	void spriteInit();
 	void setRoomID(int ID);
 	void setBunType(int type);
 	static Player *create(const std::string& name)
@@ -42,30 +45,32 @@ public:
 	cocos2d::Sprite * getSprite();
 	int getRoomID();
 	int getBombWidth();
-	cocos2d::Vec2 getPostion();
+	cocos2d::Vec2 getPosition();
 	float getSpeed();
 	int getPropType();
-	bool isDead();
 
-	cocos2d::Vec2  msg_bomb;
+	cocos2d::Vec2  msg_bomb,msg_pos;
 	std::string msg_chat;
-	int msg_pickupProp,msg_useProp;
+	int msg_pickupProp,msg_useProp, msg_pickupBun,msg_bunType;
 	cocos2d::Vec2 msg_createprop_pos;
 	int msg_walk,msg_dir,msg_createprop_type,msg_changeMap,msg_changeMode;
-	bool ischange,isconnect,isinpop, isgold;
+	bool msg_ishurt;
+	bool ischange,isconnect,isinpop, isgold,isdead;
 	enum direction {
 		up, down, left, right
 	};
 	int m_team;
+	direction m_dir;
+
 private:
 	std::string m_name;
 	cocos2d::Sprite* m_sprite;
+	cocos2d::Node* m_connet;
 	float m_speed;
-	bool m_isdead,m_isunhurtable,m_ishaveBun;
+	bool m_isunhurtable,m_ishaveBun;
 	int m_roomID,m_number,m_life,m_maxBombNum,m_bombNum,m_bombWidth;
 	int m_propType,m_propNum,m_stopwatch;
 	int m_bunType;
-	direction m_dir;
 };
 
 

@@ -1,7 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"ui\UIButton.h"
-class RoomSetting:public cocos2d::Scene
+class RoomSetting:public cocos2d::Layer
 {
 public:
 	CREATE_FUNC(RoomSetting);
@@ -9,6 +9,7 @@ public:
 	~RoomSetting();
 	bool init();
 	void update(float det);
+	void checkStart();
 	void addBackground();
 	void onTouchEnter(Ref * pSender, cocos2d::ui::Widget::TouchEventType type);
 	void changeMap();
@@ -22,5 +23,6 @@ public:
 private:
 	int m_mapID, m_modeID;
 	cocos2d::ui::Button *m_readyButton;
+	bool isready;
 };
 

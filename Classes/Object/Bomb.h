@@ -1,6 +1,6 @@
 #pragma once
 #include"cocos2d.h"
-#include"Object/MyMap.h"
+#include"Object/Map/MyMap.h"
 #include"Global/Player.h"
 
 class Bomb : public cocos2d::Sprite

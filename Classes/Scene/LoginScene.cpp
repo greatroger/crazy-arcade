@@ -3,6 +3,8 @@
 #include"Scene/RoomScene.h"
 #include"Scene/GameScene.h"
 #include"Global/Player.h"
+#include"Network/Msg.h"
+#include"Scene/Room/PopupLayer.h"
 
 USING_NS_CC;
 
@@ -18,15 +20,57 @@ LoginScene::~LoginScene()
 
 bool LoginScene::init()
 {
+	addBackground();
 	addInputBox();
 	addLoginButton();
-
-	
+	scheduleUpdate();
 	return true;
 }
+
 void LoginScene::addBackground()
 {
 
+}
+
+
+void LoginScene::update(float det)
+{
+	checkLogin();
+}
+
+void LoginScene::checkLogin()
+{
+	int type = Msg::Login.loginFeedbackType;
+	Msg::Login.loginFeedbackType = -1;
+	if (type == -1) return;
+
+	printf("%d", type);
+	auto  TipsLayer = PopupLayer::create("Scene/Room/c8.png");
+	TipsLayer->setContentSize(CCSizeMake(500, 300));
+	TipsLayer->setTitle("Tip", 25);
+	TipsLayer->addButton("Scene/Room/button_normal.png", "Scene/Room/button_selected.png", "OK");
+	switch (type)
+	{
+	default:
+		break;
+	case 0:   {
+		auto roomScene = RoomScene::create();
+	    Director::getInstance()->pushScene(TransitionFade::create(1, roomScene));
+	    break; 
+	    }
+	case 1:
+		TipsLayer->setContentText("The name has been used, you can try another name", 30, 30, 200);
+		this->addChild(TipsLayer, 5);
+		break;
+	case 2:
+		TipsLayer->setContentText("The room is full, you can try again later", 30, 30, 200);
+		this->addChild(TipsLayer, 5);
+		break;
+	case 3:
+		TipsLayer->setContentText("There has something worong with the server, you can try another IP address", 30, 30, 200);
+		this->addChild(TipsLayer, 5);
+		break;
+	}
 }
 
 void LoginScene::addInputBox()
@@ -70,7 +114,7 @@ void LoginScene:: addLoginButton()
 		if (StartClient("55", "127.0.0.01") > 0)
 		{
 			Sleep(500);
-			auto roomScene = GameScene::create();
+			auto roomScene = RoomScene::create();
 			Director::getInstance()->replaceScene(TransitionFade::create(0.1, roomScene));
 			
 		}
@@ -88,9 +132,6 @@ void LoginScene:: addLoginButton()
 			Player::local_Username = username;
 			if (StartClient(username, IPAddress) > 0)
 			{
-				Sleep(500);
-				auto roomScene = RoomScene::create();
-				Director::getInstance()->pushScene(TransitionFade::create(1,roomScene));
 			}
 			else
 			{

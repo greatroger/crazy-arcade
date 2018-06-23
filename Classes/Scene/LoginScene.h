@@ -12,6 +12,8 @@ public:
 	bool init();
 private:
 	cocos2d::ui::EditBox *usernameInput, *IPAddressInput;
+	void update(float det);
+	void checkLogin();
 	void addInputBox();
 	void addBackground();
 	void addLoginButton();

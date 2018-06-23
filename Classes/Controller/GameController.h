@@ -1,7 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"Global/Player.h"
-#include"Object/MyMap.h"
+#include"Object/Map/MyMap.h"
 
 class GameController:public cocos2d::Layer
 {

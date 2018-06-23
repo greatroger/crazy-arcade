@@ -1,7 +1,6 @@
 #pragma once
 #include"cocos2d.h"
-#include"Object/Bomb.h"
-
+#include"Global/Player.h"
 class Prop: public cocos2d::Sprite
 {
 public:
@@ -25,17 +24,8 @@ public:
 	static void loseBun(Player* player);
 private:
 	int m_type;
+	constexpr static float m_speed = 0.2f;
 };
 
 
 
-class Bazooka: public Bomb
-{
-public:
-	Bazooka() {};
-	~Bazooka() {};
-	static Bazooka* create();
-	void update(float det);
-	void explode();
-	void start();
-};

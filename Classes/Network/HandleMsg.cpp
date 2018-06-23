@@ -3,13 +3,15 @@
 #include"cocos2d.h"
 #include"Global/Player.h"
 #include<assert.h>
+#include<mutex>
 
 #pragma comment(lib, "json_vc71_libmtd.lib")
-
+using cocos2d::Vec2;
 using namespace std;
 
 static map <string, void(*)(Json::Value&)> handlefunSet;
 void handle_Hello(Json::Value& msg);
+void handle_LoginFeedback(Json::Value& msg);
 void handle_Walk(Json::Value& msg);
 void handle_Bomb(Json::Value& msg);
 void handle_ChangeSprite(Json::Value& msg);
@@ -18,9 +20,11 @@ void handle_ChangeMap(Json::Value& msg);
 void handle_CreateProp(Json::Value& msg);
 void handle_Chat(Json::Value& msg);
 void handle_PickupProp(Json::Value& msg);
+void handle_PickupBun(Json::Value& msg);
 void handle_UseProp(Json::Value& msg);
 void handle_Start(Json::Value& msg);
 void handle_StopConnect(Json::Value& msg);
+void handle_GameOver(Json::Value& msg);
 
 void HandleMsg(const string& strmsg)
 {
@@ -49,6 +53,7 @@ static void registerMsg(const string& msgType,void handlefun(Json::Value&))
 void MsgLoad()
 {
 	registerMsg("Hello", handle_Hello);
+	registerMsg("Login", handle_LoginFeedback);
 	registerMsg("Walk", handle_Walk);
 	registerMsg("Bomb", handle_Bomb);
 	registerMsg("ChangeSprite", handle_ChangeSprite);
@@ -57,9 +62,12 @@ void MsgLoad()
 	registerMsg("CreateProp", handle_CreateProp);
 	registerMsg("Chat", handle_Chat);
 	registerMsg("PickupProp", handle_PickupProp);
+	registerMsg("PickupBun", handle_PickupBun);
 	registerMsg("UseProp", handle_UseProp);
 	registerMsg("Start", handle_Start);
-	/*registerMsg("GameOver", handle_GameOver);
+	registerMsg("GameOver", handle_GameOver);
+	registerMsg("StopConnect", handle_StopConnect);
+	/*
 	registerMsg("Dead", handle_Dead);*/
 }
 
@@ -76,14 +84,16 @@ static void handle_Hello(Json::Value& msg)
 	handle_ChangeSprite(msg["Sprite"]);
 }
 
-static void handle_Dead(Json::Value& msg)
+static void handle_LoginFeedback(Json::Value& msg)
 {
-
+	int type = msg["Type"].asInt();
+	cout << "login   " << type << endl;
+	Msg::Login.loginFeedbackType = type;
 }
 
 static void handle_GameOver(Json::Value& msg)
 {
-
+	Msg::Game.isgameOver = true;
 }
 
 static void handle_Bomb(Json::Value& msg)
@@ -99,35 +109,41 @@ static void handle_Bomb(Json::Value& msg)
 
 static void handle_Start(Json::Value& msg)
 {
-	Msg::Room.isstart = true;
+	Msg::Game.isstart = true;
 	cout << "Start" << endl;
 }
 
 void handle_StopConnect(Json::Value& msg)
 {
 	std::string name = msg["Name"].asString();
+	if (name == "") return;
 	Player::Players[name]->isconnect = false;
 }
 
 static void handle_Walk(Json::Value& msg)
 {
+	cocos2d::Vec2 pos;
+	pos.x = msg["X"].asInt();
+	pos.y = msg["Y"].asInt();
 	int dir = msg["Dir"].asInt();
 	int step = msg["Step"].asInt();
 	std::string name = msg["Name"].asString();
 
 	Player::Players[name]->msg_dir = dir;
 	Player::Players[name]->msg_walk = step;
-	cout << "Walk "<<name<< endl;
+	Player::Players[name]->msg_pos = pos;
+	//cout << "Walk "<<name<< endl;
 }
 
 void handle_CreateProp(Json::Value& msg)
 {
-	cocos2d::Vec2 pos;
+	Vec2 pos;
 	pos.x = msg["X"].asInt();
 	pos.y = msg["Y"].asInt();
 	int type = msg["Type"].asInt();
-	Player::local_player->msg_createprop_pos = pos;
-	Player::local_player->msg_createprop_type = type;
+	Msg::Game.addProp(pos, type);
+	/*Player::local_player->msg_createprop_pos = pos;
+	Player::local_player->msg_createprop_type = type;*/
 }
 
 static void handle_ChangeSprite(Json::Value& msg)
@@ -167,6 +183,16 @@ static void handle_PickupProp(Json::Value& msg)
 	cout << "PickupProp  " << name << endl;
 }
 
+static void handle_PickupBun(Json::Value& msg)
+{
+	std::string name = msg["Name"].asString();
+	int type = msg["Type"].asInt();
+	int bunType = msg["BunType"].asInt();
+	Player::Players[name]->msg_pickupBun = type;
+	Player::Players[name]->msg_bunType = bunType;
+	cout << "PickupBun  " << name << endl;
+}
+
 static void handle_UseProp(Json::Value& msg)
 {
 	std::string name = msg["Name"].asString();
@@ -175,70 +201,3 @@ static void handle_UseProp(Json::Value& msg)
 	cout << "UseProp  " << name << endl;
 }
 
-/*
-int HandleMsg(string& strdata)
-{
-	Json::Reader reader;
-	Json::Value root, msg;
-	reader.parse(strdata, msg);
-	//	cout << data << endl;
-
-	if (msg["Start"].asBool())
-	{
-		g_bstart = true;
-		cout << "Start" << endl;
-	}
-
-	if (msg["GameOver"].asBool())
-	{
-		g_bstart = false;
-		cout << "GameOver" << endl;
-	}
-
-	if (msg["Dead"].asBool())
-	{
-		root = msg["Dead"];
-		std::string name = root["Name"].asString();
-		Players[name]->m_bdead = true;
-		cout << name <<"  Dead" << endl;
-	}
-
-
-
-	if (msg["Hello"].asBool())
-	{
-		root = msg["Hello"];
-		std::string name = root["Name"].asString();
-		int number = root["Number"].asInt();
-		cout << number << endl;
-		if (number == 1)  Players[name] = &player1;
-		if (number == 2)  Players[name] = &player2;
-		if (number == 3)  Players[name] = &player3;
-		if (number == 4)  Players[name] = &player4;
-		Players[name]->m_number = number;
-		Players[name]->m_name = name;
-		for (auto it = Players.begin(); it != Players.end(); ++it)
-		{
-			it->second->m_bchange = true;
-		}
-		cout << "Hello " << number << endl;
-	}
-
-	if (msg["Bomb"].asBool())
-	{
-		root = msg["Bomb"];
-		std::string name = root["Name"].asString();
-		cocos2d::Vec2 pos;
-		pos.x = root["X"].asInt();
-		pos.y = root["Y"].asInt();
-		Players[name]->msg_bomb_pos = pos;
-		cout << "Bomb " << name << endl;
-	}
-
-	if (msg["Pickup"].asBool())
-	{
-
-	}
-	return 1;
-}
-*/

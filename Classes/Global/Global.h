@@ -7,7 +7,7 @@ namespace Path {
 	namespace Player
 	{
 		constexpr char* colour[] = {
-			"red","blue","green"
+			"red","blue","fat","bee","strong","purple","nannan","dragon","captain"
 		};
 		constexpr char picGold[] = "Player/gold.png";
 
@@ -55,31 +55,34 @@ namespace Path {
 	constexpr char* picMap[] = {
 		"Map/village/village.tmx",
 		"Map/tomb/tomb.tmx",
+		"Map/bunHouse/bunHouse.tmx"
 	};
 
 	constexpr char* picProp[] = {
 		"Prop/speed.png",
 		"Prop/power.png",
 		"Prop/bubble.png",
-		"Prop/shoes.png",
+		"Prop/rpg.png",
 		"Prop/stopwatch .png",
 	};
 	constexpr char* picBun[] = {
-		"Prop/speed.png",
-		"Prop/power.png",
+		"Prop/bun.png",
+		"Prop/bun.png",
 	};
 
 	constexpr char picPop[] = "Prop/pop1.png";
 	constexpr char picBazooka[] = "Prop/bazooka.png";
+	constexpr char picBawater[] = "Prop/bawater.png";
 }
 
 namespace Setting {
-	using cocos2d::Vec2;
-    static 	Vec2 bornPlace[] = {
-		Vec2(20,20),
-		Vec2(20,740),
-	};
-	constexpr int MaxMapNum = 2;
-
+	constexpr int MaxMapNum = 3;
 	extern bool musicSwitch;
+}
+
+namespace Music {
+	enum music {
+		main,room,eatProp,setbomb,explode,win,start,tomb,village,bun,stopwatch
+	};
+	void PlayMusic(music type);
 }

@@ -3,12 +3,10 @@
 #include"Scene/LoginScene.h"
 #include"Scene/HelpScene.h"
 #include"Scene/SettingScene.h"
-#include "SimpleAudioEngine.h"
 #include"Scene/HelpScene.h"
 #include"Global/Global.h"
-
+#include"Scene/Room/PopupLayer.h"
 USING_NS_CC;
-using namespace CocosDenshion;
 
 StartScene::StartScene()
 {
@@ -20,13 +18,10 @@ StartScene::~StartScene()
 
 bool StartScene::init()
 {
-	if (Setting::musicSwitch)
-	{
-		SimpleAudioEngine::getInstance()->playBackgroundMusic("Sound/mainScene.mp3", true);
-	}
+	Music::PlayMusic(Music::music::main);
 	addBackground();
 	addButton();
-	return true;
+	return true;		
 }
 
 void StartScene::addBackground()
@@ -48,11 +43,12 @@ void StartScene::menuPlayCallback(cocos2d::Ref * pSender)
 
 void StartScene::menuSettingsCallback(cocos2d::Ref * pSender) 
 {
-	Director::getInstance()->pushScene(TransitionFade::create(1, SettingScene::create()));
+	Director::getInstance()->replaceScene(TransitionFade::create(0.6, SettingScene::create()));
 }
+
 void StartScene::menuHelpCallback(cocos2d::Ref * pSender)
 {
-	Director::getInstance()->pushScene(TransitionFade::create(1, HelpScene::create()));
+	Director::getInstance()->replaceScene(TransitionFade::create(1, HelpScene::create()));
 }
 
 void StartScene::menuExitCallback(Ref* pSender)

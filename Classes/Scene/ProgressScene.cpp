@@ -62,7 +62,6 @@ void ProgressScene::updateEachSecond2(float dt)
 	label->setPosition(visiblesize.width / 2, visiblesize.height / 2);
 	addChild(label, 0);
 }
-
 void ProgressScene::updateEachSecond1(float dt)
 {
 	removeAllChildren();
@@ -79,6 +78,8 @@ void ProgressScene::updateEachSecond(float dt)
 	auto label = Label::createWithTTF("START", "fonts/Marker Felt.ttf", 200);
 	label->setPosition(visiblesize.width / 2, visiblesize.height / 2);
 	addChild(label, 0);
+
+	Music::PlayMusic(Music::start);
 
 	auto scene = GameScene::create();
 	scene->start(m_mapID);

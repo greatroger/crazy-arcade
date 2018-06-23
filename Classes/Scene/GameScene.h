@@ -14,6 +14,7 @@ private:
 	void addMap(int mapID);
 	void addSprite();
 	void addManager();
+	void checkOver();
 	MyMap *m_map;
 };
 

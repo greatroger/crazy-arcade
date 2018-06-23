@@ -25,6 +25,7 @@ bool RoomSetting::init()
 	createPatternButton();
 	createMapButton();
 	createBackButton();
+	isready = false;
 	scheduleUpdate();
 	return true;
 }
@@ -35,18 +36,23 @@ void RoomSetting::update(float det)
 		changeMap();
 		Msg::Room.ismapchange = false;
 	}
-
+	 
 	if (Msg::Room.ismodechange){
 		Msg::Room.ismodechange = false;
 	}
-	if (Msg::Room.isstart)
+	checkStart();
+}
+
+void RoomSetting::checkStart()
+{
+	if (Msg::Game.isstart)
 	{
+		Msg::Game.isstart = false;
 		auto scene = ProgressScene::create();
 		scene->start(m_mapID);
 		Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
 	}
 }
-
 
 void RoomSetting::addBackground()
 {
@@ -55,7 +61,7 @@ void RoomSetting::addBackground()
 	auto background = Sprite::create("Scene/Room/bg.png");
 	assert(background != nullptr);
 	background->setPosition(visiblesize.width / 2, visiblesize.height / 2);
-	background->setScale(1.4f);
+	background->setScale(1.6f);
 	addChild(background, -1);
 	
 	auto map = TMXTiledMap::create(Path::picMap[0]);
@@ -83,18 +89,18 @@ void RoomSetting::addBackground()
 
 void RoomSetting::onTouchEnter(Ref *pSender, cocos2d::ui::Widget::TouchEventType type)  //ready的回调函数
 {
-	static bool isready = false;
 	if (type != ui::Widget::TouchEventType::ENDED) return;
 
 	isready = !isready;
+	printf("%d\n", isready);
 	if (isready){
 		m_readyButton->setTitleText("cancle");
 	}
 	else{
 		m_readyButton->setTitleText("ready");
 	}
+	//Sleep(10);
 	SendMsg_Ready();
-	Sleep(100);
 }
 
 void RoomSetting::changeMap()
@@ -133,9 +139,10 @@ void RoomSetting::createMapButton()
 	menu->setPosition(0, 0);
 	addChild(menu, 3);
 }
+
 void RoomSetting::menuMapCallback(cocos2d::Ref * pSender)
 {
-	SendMsg_ChangeMap(1);
+	SendMsg_ChangeMap((m_mapID + 1) % Setting::MaxMapNum);
 	Sleep(50);
 }
 
@@ -172,5 +179,6 @@ void RoomSetting::createBackButton()
 
 void RoomSetting::menuBackCallback(cocos2d::Ref * pSender)
 {
-	Director::getInstance()->replaceScene(TransitionFade::create(1, RoomScene::create()));
+	this->setVisible(false);
+	this->setTouchEnabled(false);
 }

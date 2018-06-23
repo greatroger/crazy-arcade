@@ -55,7 +55,7 @@ void GameController::startWalkListener()
 		if (keycode == A) { m_bkey.a = false; }
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-	schedule(schedule_selector(GameController::walkUpdate),m_player->getSpeed());
+	schedule(schedule_selector(GameController::walkUpdate),m_player->getSpeed()+0.01);
 }
 
 void GameController::update(float det)
@@ -64,54 +64,80 @@ void GameController::update(float det)
 	{
 		m_speed = m_player->getSpeed();
 		unschedule(schedule_selector(GameController::walkUpdate));
-		schedule(schedule_selector(GameController::walkUpdate), m_speed);
+		schedule(schedule_selector(GameController::walkUpdate), m_speed+0.01);
 	}
 }
 
 void GameController::walkUpdate(float tmd)
 { 
 	int step = m_map->getTileSize().width;
-	if (m_player->isgold) return;
+	auto  pos = m_player->getPosition();
 
+	if (m_player->isgold) return;
+	if (m_player->isdead) return;
 	if (m_bkey.w)
 	{
+		m_player->setDirection(Player::direction::up);
 		if (ifCanMove(Vec2(0, step))) 
-			SendMsg_Walk(Player::up, step);
+		{
+			Vec2 walk = m_player->getDirection()*step;
+			auto moveBy = MoveBy::create(m_speed, walk);
+			m_player->getSprite()->runAction(moveBy);
+			SendMsg_Walk(m_player->m_dir, step, pos.x, pos.y);
+		}
 		else
-		    SendMsg_Walk(Player::up, 0);
+		SendMsg_Walk(m_player->m_dir, 0, pos.x, pos.y);
 		return;
 	}
 	if (m_bkey.s)
 	{
+		m_player->setDirection(Player::direction::down);
 		if (ifCanMove(Vec2(0, -step))) 
-			SendMsg_Walk(Player::down, step);
+		{
+			Vec2 walk = m_player->getDirection()*step;
+			auto moveBy = MoveBy::create(m_speed, walk);
+			m_player->getSprite()->runAction(moveBy);
+			SendMsg_Walk(m_player->m_dir, step, pos.x, pos.y);
+		}
 		else
-			SendMsg_Walk(Player::down, 0);
+		SendMsg_Walk(m_player->m_dir, 0, pos.x, pos.y);
 		return;
 	}
 
 	if (m_bkey.a)
 	{
+		m_player->setDirection(Player::direction::left);
 		if (ifCanMove(Vec2(-step, 0)))
-			SendMsg_Walk(Player::left, step);
+		{
+			Vec2 walk = m_player->getDirection()*step;
+			auto moveBy = MoveBy::create(m_speed, walk);
+			m_player->getSprite()->runAction(moveBy);
+			SendMsg_Walk(m_player->m_dir, step, pos.x, pos.y);
+		}
 		else
-			SendMsg_Walk(Player::left, 0);
+		SendMsg_Walk(m_player->m_dir, 0, pos.x, pos.y);
 		return;
 	}
 
 	if (m_bkey.d)
 	{
+		m_player->setDirection(Player::direction::right);
 		if (ifCanMove(Vec2(step, 0)))
-			SendMsg_Walk(Player::right, step);
+		{
+			Vec2 walk = m_player->getDirection()*step;
+			auto moveBy = MoveBy::create(m_speed, walk);
+			m_player->getSprite()->runAction(moveBy);
+			SendMsg_Walk(m_player->m_dir, step, pos.x, pos.y);
+		}
 		else
-			SendMsg_Walk(Player::right, 0);
+		SendMsg_Walk(m_player->m_dir, 0, pos.x, pos.y);
 		return;
 	}
 }
 
 bool GameController::ifCanMove(Vec2& direction)
 {
-	Vec2 pos = m_player->getPostion() + direction;
+	Vec2 pos = m_player->getPosition() + direction;
 	if (!m_map->ifCanMove(pos)) return false;
 	if (!m_player->ifcanMove()) return false;
 	return true;
@@ -123,13 +149,14 @@ void GameController::startSpaceListener()
 	listener->onKeyPressed = [this](EventKeyboard::KeyCode keycode, Event * event) {
 		if (keycode == EventKeyboard::KeyCode::KEY_SPACE)
 		{
+			if (m_player->isdead) return;
 			if (m_player->getPropType() != -1)
 			{
 				SendMsg_UseProp(m_player->getName(), m_player->getPropType());
 			}
 			else
 			{
-				Vec2 pos = m_player->getPostion();
+				Vec2 pos = m_player->getPosition();
 				pos = m_map->tileCoordToPosition(m_map->positionToTileCoord(pos));
 				if (!ifcanBomb(pos)) return;
 				SendMsg_Bomb(pos.x, pos.y);
@@ -149,6 +176,7 @@ void GameController::startKeyEListener()
 			if(m_player->getStopwatch()<=0)  return;
 			if (m_player->isgold)return;
 			if (m_player->isinpop)return;
+			if (m_player->isdead)return;
 			SendMsg_UseProp(m_player->getName(),Prop::Type::stopwatch);
 			Sleep(50);
 		}

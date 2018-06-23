@@ -8,7 +8,7 @@ public:
 	CREATE_FUNC(ProgressScene);
 	
 	bool init();
-	void updateEachSecond5(float dt);
+    void updateEachSecond5(float dt);
 	void updateEachSecond4(float dt);
 	void updateEachSecond3(float dt);
 	void updateEachSecond2(float dt);

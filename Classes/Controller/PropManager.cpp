@@ -1,8 +1,9 @@
 #include "PropManager.h"
 #include"Object/Prop.h"
-
 #include<iostream>
 #include"Global/Global.h"
+#include"Object/Bazooka.h"
+#include"Network/Msg.h"
 USING_NS_CC;
 
 #define PT Prop::Type  
@@ -27,10 +28,14 @@ void PropManager::update(float det)
 {
 	for (auto it = Player::Players.begin(); it != Player::Players.end(); ++it)
 	{
+		auto name = it->first;
 		auto player = it->second;
 
 		if (player->msg_pickupProp != -1)
 		{
+			if (name == Player::local_Username)
+				Music::PlayMusic(Music::eatProp);
+
 			pickupProp(player->msg_pickupProp,player);
 			player->msg_pickupProp = -1;
 		}
@@ -42,15 +47,16 @@ void PropManager::update(float det)
 		}
 	}
 
-	auto player = Player::local_player;
-	if (player->msg_createprop_pos != Vec2(0, 0))
+	for(auto it=Msg::Game.createProp.begin(); it!= Msg::Game.createProp.end();++it)
 	{
-		auto pos = m_map->tileCoordToPosition(player->msg_createprop_pos);
-		auto prop = Prop::create(player->msg_createprop_type);
+		Msg::Game.v_mutex.lock();
+		auto pos = m_map->tileCoordToPosition(it->pos);
+		auto prop = Prop::create(it->type);
 		prop->setPosition(pos);
 		m_map->addChild(prop,1);
-		player->msg_createprop_pos = Vec2(0, 0);
-		player->msg_createprop_type = -1;
+		Msg::Game.createProp.erase(it);
+		Msg::Game.v_mutex.unlock();
+		break;
 	}
 }
 
@@ -99,11 +105,13 @@ void PropManager::useProp(int type, Player* player)
 
 void PropManager::useProp_bazooka(Player* player)
 {
-	auto baz =Bazooka::create();
-	Vec2 dir = player->getDirection()*2000;
-	auto moveBy = MoveBy::create(20,dir);
+	Vec2 dir = player->getDirection();
+	auto moveBy = MoveBy::create(3,dir*2000);
+	auto baz = Bazooka::create();
+	m_map->addChild(baz, 15);
+	baz->start(m_map);
+	baz->setPosition(player->getPosition()+dir*m_map->getTileSize().width);
 	baz->runAction(moveBy);
-	baz->start();
 	player->useProp();
 }
 

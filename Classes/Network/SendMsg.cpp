@@ -6,11 +6,15 @@
 
 std::map<std::string, Msg_Player*> Msg::Players;
 Msg_Room Msg::Room;
+Msg_Game Msg::Game;
+Msg_Login Msg::Login;
 
-void SendMsg_Walk(int dir, int step)
+void SendMsg_Walk(int dir, int step,int x, int y)
 {
 	Json::Value data, writedata;
 	Json::FastWriter writer;
+	writedata["X"] = x;
+	writedata["Y"] = y;
 	writedata["Dir"] = dir;
 	writedata["Step"] = step;
 	writedata["Name"] = Player::local_Username;
@@ -59,6 +63,19 @@ void SendMsg_PickupProp(std::string& name,int type)
 	writedata["Name"] = name;
 	writedata["Type"] = type;
 	data["PickupProp"] = writedata;
+	std::string senddata = writer.write(data);
+	SendMsg(senddata);
+}
+
+
+void SendMsg_PickupBun(std::string& name, int type,int bunType)
+{
+	Json::Value data, writedata;
+	Json::FastWriter writer;
+	writedata["Name"] = name;
+	writedata["Type"] = type;
+	writedata["BunType"] = bunType;
+	data["PickupBun"] = writedata;
 	std::string senddata = writer.write(data);
 	SendMsg(senddata);
 }
@@ -162,8 +179,14 @@ void SendMsg_UseProp(std::string& name,int type)
 	SendMsg(senddata);
 }
 
-void SendMsg_GetBunScore()
+void SendMsg_GetBunScore(int team)
 {
+	Json::Value data, writedata;
+	Json::FastWriter writer;
+	writedata["Team"] = team;
+	data["GetBunScore"] = writedata;
+	std::string senddata = writer.write(data);
+	SendMsg(senddata);
 }
 
 void SendMsg_Ready()

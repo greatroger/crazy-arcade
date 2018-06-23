@@ -60,9 +60,11 @@ void ChatBox::createChatBox()
 			menuSendCallback(this);
 		}
 	};
+
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
 	boxHistory = cocos2d::ui::ListView::create();
+	boxHistory->setTouchEnabled(false);
 	boxHistory->setDirection(cocos2d::ui::ScrollView::Direction::VERTICAL);
 	boxHistory->setContentSize(Size(400, 200));
 	boxHistory->setBackGroundColor(Color3B(238, 238, 238));

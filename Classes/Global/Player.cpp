@@ -10,35 +10,57 @@ USING_NS_CC;
 
 Player::Player(const std::string& name):m_name(name)
 {
-	m_speed = 0.16f;
-	m_isdead = false;
-	msg_bomb = Vec2(0, 0);
-	msg_walk = 0;
-	msg_dir = -1;
-	msg_createprop_pos = Vec2(0, 0);
-	msg_createprop_type = -1;
-	msg_pickupProp = -1;
-	msg_changeMode = -1;
-	m_stopwatch = 0;
-	msg_useProp = -1;
-	m_life = 5;
-	m_bombNum = 0;
-	m_propType = -1;
-	m_propNum = 0;
-	m_maxBombNum = 2;
-	m_bombWidth = 2;
-	m_isunhurtable = false;
-	isconnect = true;
-	isgold = false;
-	isinpop = false;
-	msg_changeMap = -1;
-	m_team = -1;
-	m_bunType = 0;
+	init();
 }
 
 Player::~Player()
 {
 
+}
+
+
+void Player::update(float det)
+{
+}
+
+bool Player::init()
+{
+	msg_dir = -1;
+	msg_bomb = Vec2(0, 0);
+	msg_walk = 0;
+	msg_createprop_pos = Vec2(0, 0);
+	msg_createprop_type = -1;
+	msg_pickupProp = -1;
+	msg_pickupBun = -1;
+	msg_bunType = -1;
+	msg_changeMode = -1;
+	msg_useProp = -1;
+	m_life = 2;
+	m_bombNum = 0;
+	m_isunhurtable = false;
+	isconnect = true;
+	msg_changeMap = -1;
+	msg_ishurt = false;
+	m_team = -1;
+	ischange = false;
+	spriteInit();
+	scheduleUpdate();
+	return true;
+}
+
+void Player::spriteInit()
+{
+	isgold = false;
+	isinpop = false;
+	isdead = false;
+	m_speed = 0.16f;
+	m_bunType = -1;
+	m_maxBombNum = 2;
+	m_bombWidth = 2;
+	m_propType = -1;
+	m_propNum = 0;
+	m_stopwatch = 0;
+	msg_pos = Vec2(-1, -1);
 }
 
 void Player::setRoomID(int ID)
@@ -48,8 +70,8 @@ void Player::setRoomID(int ID)
 
 void Player::setBunType(int type)
 {
-	assert(type <= 2);
-	assert(type >= 0);
+	assert(type <= 1);
+	assert(type >= -1);
 	m_bunType = type;
 }
 
@@ -57,6 +79,7 @@ void Player ::setDirection(int dir)
 {
 	assert(dir <= 3 && dir>=0);
 	m_dir =direction(dir);
+	m_sprite->setTexture(Path::Player::getPicSprite(m_number, m_dir));
 }
 
 void Player::setNumber(int number)
@@ -100,7 +123,8 @@ int Player::getBombWidth()
 {
 	return m_bombWidth;
 }
-cocos2d::Vec2 Player::getPostion()
+
+cocos2d::Vec2 Player::getPosition()
 {
 	return m_sprite->getPosition();
 }
@@ -142,8 +166,9 @@ int Player::getLife()
 Sprite* Player::createSprite()
 {
     m_sprite = Sprite::create(Path::Player::getPicSprite(m_number,1));
-	setDirection(down);
+	m_dir = down;
 	m_sprite->setScale(1.1f);
+	spriteInit();
 	return m_sprite;
 }
 
@@ -151,17 +176,31 @@ void Player::runAction(MyMap* map)
 {
 	if (msg_dir != -1)
 	{
-		setDirection(msg_dir);
-		m_sprite->setTexture(Path::Player::getPicSprite(m_number, m_dir));
+		if (m_name != Player::local_Username && !isgold)
+		{
+			setDirection(msg_dir);
+		}
 		msg_dir = -1;
 	}
 
+	/*if (msg_pos != Vec2(-1, -1))
+	{
+		if (m_name != Player::local_Username && getPosition()!=msg_pos)
+		{
+			m_sprite->setPosition(msg_pos);
+		}
+		msg_pos = Vec2(-1, -1);
+	}*/
+
 	if (msg_walk != 0)
 	{
-		Vec2 walk = getDirection()*msg_walk;
-		auto moveBy = MoveBy::create(m_speed,walk);
-		m_sprite->runAction(moveBy);
-		msg_walk = 0;
+		if (m_name != Player::local_Username)
+		{
+			Vec2 walk = getDirection()*msg_walk;
+			auto moveBy = MoveBy::create(m_speed, walk);
+			m_sprite->runAction(moveBy);
+			msg_walk = 0;
+		}
 	}
 
 	if (msg_bomb != Vec2(0, 0))
@@ -223,15 +262,10 @@ void Player::getDamageByBomb()
 }
 
 
-bool Player::isDead()
-{
-	return m_isdead;
-}
-
 
 bool Player::ifcanBomb()
 {
-	if (m_life <= 0) return false;
+	if (isdead) return false;
 	if (m_maxBombNum <= m_bombNum)return false;
 	if (isgold)return false;
 	if (isinpop)return false;
@@ -243,7 +277,7 @@ int Player::getBunType()
 }
 bool Player::ifcanMove()
 {
-	if (m_life <= 0) return false;
+	if (isdead) return false;
 	if (isgold) return false;
 	if (isinpop) return false;
 	return true;
