@@ -25,6 +25,7 @@ unsigned __stdcall ThreadRecv(void* param)
 		if (ret > 0){
 			cout << "recive msg  " << ret << endl;
 		}
+	//	assert(ret < 105);
 		string strdata;
 		for (int i = 2; i < ret; ++i){
 			strdata.push_back(buf[i]);

@@ -34,21 +34,8 @@ void Normal::start()
 void Normal::update(float det)
 {
 	checkDead();
-	checkOver();
 }
 
-void Normal::checkOver()
-{
-	if (Msg::Game.isgameOver)
-	{
-		Msg::Game.isgameOver = false;
-		Music::stopMusic();
-		Music::PlayMusic(Music::music::win);
-		Sleep(500);
-		auto roomScene = RoomScene::create();
-		Director::getInstance()->replaceScene(TransitionFade::create(1, roomScene));
-	}
-}
 
 void Normal::checkDead()
 {

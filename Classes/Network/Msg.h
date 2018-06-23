@@ -20,6 +20,7 @@ void SendMsg_CreateProp(int x, int y,int type);
 void SendMsg_DamageMap(int x,int y);
 void SendMsg_UseProp(std::string& name,int type);
 void SendMsg_GetBunScore(int team);
+void SendMsg_GetHurt();
 void SendMsg_Ready();
 void HandleMsg(const std::string& strdata);
 
@@ -27,12 +28,34 @@ void HandleMsg(const std::string& strdata);
 
 struct Msg_Player
 {
+private:
+	struct msg_walk
+	{
+		cocos2d::Vec2 pos=cocos2d::Vec2(-1,-1);
+		int step=0;
+		int dir=-1;
+	};
+public:
 	cocos2d::Vec2  msg_bomb;
 	std::string msg_chat;
 	int msg_pickupProp, msg_useProp;
 	cocos2d::Vec2 msg_createprop_pos;
-	int msg_walk, msg_dir, msg_createprop_type, msg_changeMap, msg_changeMode;
-	bool ischange;
+	int  msg_dir, msg_createprop_type, msg_changeMap, msg_changeMode;
+	bool ischange=false,isinpop=false;
+
+	std::vector<msg_walk> Walk;
+	std::recursive_mutex walk_mutex;
+
+	void addWalk(cocos2d::Vec2 pos, int dir,int step)
+	{
+		msg_walk m;
+		walk_mutex.lock();
+		m.pos = pos;
+		m.step = step;
+		m.dir = dir;
+		Walk.push_back(m);
+		walk_mutex.unlock();
+	}
 };
 
 struct Msg_Room
@@ -73,7 +96,6 @@ public:
 };
 
 namespace Msg {
-    extern	std::map<std::string, Msg_Player*> Players;
 	extern Msg_Room Room;
 	extern Msg_Game Game;
 	extern Msg_Login Login;

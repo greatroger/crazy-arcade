@@ -1,6 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"Object/Map/MyMap.h"
+#include"Network/Msg.h"
 
 class Player:public cocos2d::Node
 {
@@ -50,11 +51,11 @@ public:
 	float getSpeed();
 	int getPropType();
 
-	cocos2d::Vec2  msg_bomb,msg_pos;
+	cocos2d::Vec2  msg_bomb;
 	std::string msg_chat;
 	int msg_pickupProp,msg_useProp, msg_pickupBun,msg_bunType;
 	cocos2d::Vec2 msg_createprop_pos;
-	int msg_walk,msg_dir,msg_createprop_type,msg_changeMap,msg_changeMode;
+	int msg_createprop_type;
 	bool msg_ishurt;
 	bool ischange,isconnect,isinpop, isgold,isdead;
 	enum direction {
@@ -63,6 +64,7 @@ public:
 	int m_team;
 	direction m_dir;
 
+	Msg_Player Msg;
 private:
 	std::string m_name;
 	cocos2d::Sprite* m_sprite;

@@ -13,7 +13,6 @@ private:
 	cocos2d::Vec2 m_bunpos[2];
 	bool init();
 	void start();
-	void bunCreate();
 	void update(float det);
 	void checkOver();
 	void checkBun();

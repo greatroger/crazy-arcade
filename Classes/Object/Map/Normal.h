@@ -22,8 +22,8 @@ protected:
 	cocos2d::Vec2 bornPlace[4] = {
 		cocos2d::Vec2(20,20),
 		cocos2d::Vec2(20,740),
-		cocos2d::Vec2(0,0),
-		cocos2d::Vec2(0,0),
+		cocos2d::Vec2(980,20),
+		cocos2d::Vec2(980,740),
 	};
 };
 

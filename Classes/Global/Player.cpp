@@ -25,21 +25,17 @@ void Player::update(float det)
 
 bool Player::init()
 {
-	msg_dir = -1;
 	msg_bomb = Vec2(0, 0);
-	msg_walk = 0;
 	msg_createprop_pos = Vec2(0, 0);
 	msg_createprop_type = -1;
 	msg_pickupProp = -1;
 	msg_pickupBun = -1;
 	msg_bunType = -1;
-	msg_changeMode = -1;
 	msg_useProp = -1;
 	m_life = 2;
 	m_bombNum = 0;
 	m_isunhurtable = false;
 	isconnect = true;
-	msg_changeMap = -1;
 	msg_ishurt = false;
 	m_team = -1;
 	ischange = false;
@@ -60,7 +56,6 @@ void Player::spriteInit()
 	m_propType = -1;
 	m_propNum = 0;
 	m_stopwatch = 0;
-	msg_pos = Vec2(-1, -1);
 }
 
 void Player::setRoomID(int ID)
@@ -174,40 +169,40 @@ Sprite* Player::createSprite()
 
 void Player::runAction(MyMap* map)
 {
-	if (msg_dir != -1)
-	{
-		if (m_name != Player::local_Username && !isgold)
-		{
-			setDirection(msg_dir);
-		}
-		msg_dir = -1;
-	}
 
-	if (msg_pos != Vec2(-1, -1))
+	for (auto it = Msg.Walk.begin(); it != Msg.Walk.end(); ++it)
 	{
+		Msg.walk_mutex.lock();
+		auto msg_pos = it->pos;
+		auto msg_dir = it->dir;
+		auto msg_step = it->step;
+
 		if (m_name != Player::local_Username)
 		{
-			auto player = Player::local_player;
-			Vec2 playerpos = player->getPosition();
+			if (msg_dir != -1 && !isgold) 
+			{
+				setDirection(msg_dir);
+			}
 
-			float distance = (abs(playerpos.x - msg_pos.x) + abs(playerpos.y - msg_pos.y)) / 2;
-			if (distance>50){
-				if (m_sprite != nullptr)
-				m_sprite->setPosition(msg_pos);
+			if (msg_pos != Vec2(-1, -1)) 
+			{
+				Vec2 playerpos =getPosition();
+				float distance = (abs(playerpos.x - msg_pos.x) + abs(playerpos.y - msg_pos.y)) / 2;
+				if (distance > 40 && m_sprite != nullptr) {
+						m_sprite->setPosition(msg_pos);
+				}
+			}
+
+			if (msg_step != 0)
+			{
+				Vec2 walk = getDirection()*msg_step;
+				auto moveBy = MoveBy::create(m_speed, walk);
+				m_sprite->runAction(moveBy);
 			}
 		}
-		msg_pos = Vec2(-1, -1);
-	}
-
-	if (msg_walk != 0)
-	{
-		if (m_name != Player::local_Username)
-		{
-			Vec2 walk = getDirection()*msg_walk;
-			auto moveBy = MoveBy::create(m_speed, walk);
-			m_sprite->runAction(moveBy);
-			msg_walk = 0;
-		}
+		Msg.Walk.erase(it);
+		Msg.walk_mutex.unlock();
+		break;
 	}
 
 	if (msg_bomb != Vec2(0, 0))

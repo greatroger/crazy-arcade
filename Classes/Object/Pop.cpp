@@ -3,8 +3,9 @@
 #include"Global/Global.h"
 USING_NS_CC;
 
-Pop::Pop(int type, Player* player):m_team(type),m_player(player)
+Pop::Pop(Player* player):m_player(player)
 {
+	m_team = player->m_team;
 	auto act1 = DelayTime::create(5.0f);
 	auto act2 = CallFunc::create([this]()
 	{
@@ -19,9 +20,9 @@ Pop::~Pop()
 {
 }
 
-Pop* Pop::create(int type, Player* player)
+Pop* Pop::create(Player* player)
 {
-	Pop* pop = new Pop(type, player);
+	Pop* pop = new Pop(player);
 	std::string path = Path::picPop[0];
 	if (pop && pop->initWithFile(path))
 	{
@@ -46,6 +47,14 @@ void Pop::update(float det)
 		   break;
 	    }
 	}
+}
+
+void Pop::getInPop(Player* player)
+{
+	player->isinpop = true;
+	auto pop = Pop::create(player);
+	player->getSprite()->addChild(pop);
+	pop->setPosition(Vec2(20, 20));
 }
 
 void Pop::puncturePop(int team)

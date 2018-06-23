@@ -100,6 +100,7 @@ void PropManager::useProp(int type, Player* player)
 		break;
 	case PT::stopwatch:
 		useProp_stopwatch(player);
+		break;
 	}
 }
 

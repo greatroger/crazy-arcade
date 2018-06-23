@@ -16,6 +16,7 @@ private:
 	void addSprite();
 	void addManager();
 	void checkOver();
+	void checkPop();
 	MyMap *m_map;
 };
 

@@ -4,7 +4,7 @@
 #include"Global/Player.h"
 #pragma comment(lib, "json_vc71_libmtd.lib")
 
-std::map<std::string, Msg_Player*> Msg::Players;
+//std::map<std::string, Msg_Player*> Msg::Players;
 Msg_Room Msg::Room;
 Msg_Game Msg::Game;
 Msg_Login Msg::Login;
@@ -185,6 +185,16 @@ void SendMsg_GetBunScore(int team)
 	Json::FastWriter writer;
 	writedata["Team"] = team;
 	data["GetBunScore"] = writedata;
+	std::string senddata = writer.write(data);
+	SendMsg(senddata);
+}
+
+void SendMsg_GetHurt()
+{
+	Json::Value data, writedata;
+	Json::FastWriter writer;
+	writedata["Name"] = Player::local_Username;
+	data["GetHurt"] = writedata;
 	std::string senddata = writer.write(data);
 	SendMsg(senddata);
 }

@@ -5,12 +5,12 @@
 class Pop : public cocos2d::Sprite
 {
 public:
-	Pop(int type, Player* player);
+	Pop(Player* player);
 	~Pop();
-	static Pop* create(int type, Player* player);
+	static Pop* create(Player* player);
 	void update(float det);
+static	void getInPop(Player * player);
 	void puncturePop(int team);
-	void audioPlay();
 private:
 	int m_team;
 	Player* m_player;

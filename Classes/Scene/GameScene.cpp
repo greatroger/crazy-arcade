@@ -5,6 +5,7 @@
 #include"Controller/PropManager.h"
 #include"Network/Msg.h"
 #include"Scene/RoomScene.h"
+#include"Object/Pop.h"
 #include<assert.h>
 USING_NS_CC;
 
@@ -29,12 +30,12 @@ void GameScene::start(int mapID)
 	addManager();
 	m_map->start();
 	scheduleUpdate();
-	schedule(schedule_selector(GameScene::walkUpdate), 2.0f);
 }
 
 void GameScene::update(float det)
 {
 	checkOver();
+	checkPop();
 	FOR_ALL_PLAYERS
 	{
 		auto player = it->second;
@@ -48,6 +49,7 @@ void GameScene::walkUpdate(float tmd)
 	auto pos = player->getPosition();
 	SendMsg_Walk(-1, 0, pos.x, pos.y);
 }
+
 void GameScene::addMap(int mapID)
 {
 	m_map=GameMap::create(mapID);
@@ -84,8 +86,24 @@ void GameScene::checkOver()
 	if (Msg::Game.isgameOver)
 	{
 		Msg::Game.isgameOver = false;
+		Music::stopMusic();
+		Music::PlayMusic(Music::music::win);
 		Sleep(500);
 		auto roomScene = RoomScene::create();
 		Director::getInstance()->replaceScene(TransitionFade::create(1, roomScene));
+	}
+}
+
+void GameScene::checkPop()
+{
+	FOR_ALL_PLAYERS{
+		auto name = it->first;
+	    auto player = it->second;
+	    auto sprite = player->getSprite();
+	    if (player->Msg.isinpop)
+		{
+		   player->Msg.isinpop = false;
+	 	   Pop::getInPop(player);
+	    }
 	}
 }

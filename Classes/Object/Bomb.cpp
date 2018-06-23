@@ -141,20 +141,14 @@ void Bomb::creatWater(Vec2 pos) //制作水花
 
 void Bomb::hurtPlayer(Vec2 pos)
 {
-	for (auto it = Player::Players.begin(); it != Player::Players.end(); ++it)
-	{
-		auto player = it->second;
-		Vec2 playerpos = player->getPosition();
-		playerpos = m_map->standard(playerpos);
+	auto player = Player::local_player;
+	Vec2 playerpos = player->getPosition();
+	playerpos = m_map->standard(playerpos);
 
-		if (playerpos != pos) continue;
-		if (player->isgold)continue;
-		if (player->isinpop)continue;
+	if (playerpos != pos) return;
+	if (player->isgold) return;
+	if (player->isinpop) return;
 
-		player->isinpop = true;
-		auto pop = Pop::create(player->m_team, player);
-		player->getSprite()->addChild(pop);
-		pop->setPosition(Vec2(20,20));
-	}
+	SendMsg_GetHurt();
 }
 

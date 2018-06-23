@@ -25,6 +25,7 @@ void handle_UseProp(Json::Value& msg);
 void handle_Start(Json::Value& msg);
 void handle_StopConnect(Json::Value& msg);
 void handle_GameOver(Json::Value& msg);
+void handle_GetHurt(Json::Value& msg);
 
 void HandleMsg(const string& strmsg)
 {
@@ -67,6 +68,7 @@ void MsgLoad()
 	registerMsg("Start", handle_Start);
 	registerMsg("GameOver", handle_GameOver);
 	registerMsg("StopConnect", handle_StopConnect);
+	registerMsg("GetHurt", handle_GetHurt);
 	/*
 	registerMsg("Dead", handle_Dead);*/
 }
@@ -128,11 +130,7 @@ static void handle_Walk(Json::Value& msg)
 	int dir = msg["Dir"].asInt();
 	int step = msg["Step"].asInt();
 	std::string name = msg["Name"].asString();
-
-	Player::Players[name]->msg_dir = dir;
-	Player::Players[name]->msg_walk = step;
-	Player::Players[name]->msg_pos = pos;
-	//cout << "Walk "<<name<< endl;
+	Player::Players[name]->Msg.addWalk(pos, dir, step);
 }
 
 void handle_CreateProp(Json::Value& msg)
@@ -142,8 +140,6 @@ void handle_CreateProp(Json::Value& msg)
 	pos.y = msg["Y"].asInt();
 	int type = msg["Type"].asInt();
 	Msg::Game.addProp(pos, type);
-	/*Player::local_player->msg_createprop_pos = pos;
-	Player::local_player->msg_createprop_type = type;*/
 }
 
 static void handle_ChangeSprite(Json::Value& msg)
@@ -161,6 +157,7 @@ static void handle_ChangeMap(Json::Value& msg)
 	Msg::Room.mapID = mapID;
 }
 
+
 static void handle_ChangeMode(Json::Value& msg)
 {
 	std::string name = msg["Name"].asString();
@@ -173,6 +170,12 @@ static void handle_Chat(Json::Value& msg)
 	std::string name = msg["Name"].asString();
 	std::string chatmsg = msg["Msg"].asString();
 	Player::Players[name]->msg_chat = chatmsg;
+}
+
+static void handle_GetHurt(Json::Value& msg)
+{
+	std::string name = msg["Name"].asString();
+	Player::Players[name]->Msg.isinpop = true;
 }
 
 static void handle_PickupProp(Json::Value& msg)

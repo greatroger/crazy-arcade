@@ -27,7 +27,7 @@ void Bazooka::start(MyMap * map)
 void Bazooka::update(float det)
 {
 	Vec2 pos = this->getPosition();
-
+	//撞上炸弹
 	for (auto it = bombList.begin(); it != bombList.end(); ++it) {
 		if ((*it)->getPosition() == pos) {
 			explode();
@@ -35,26 +35,7 @@ void Bazooka::update(float det)
 			return;
 		}
 	}
-
-	FOR_ALL_PLAYERS
-	{
-		auto player = it->second;
-	Vec2 playerpos = player->getPosition();
-	float distance = (abs(playerpos.x - pos.x) + abs(playerpos.y - pos.y)) / 2;
-
-	if (distance>5) continue;
-	if (player->isgold)continue;
-	if (player->isinpop)continue;
-
-	player->isinpop = true;
-	auto pop = Pop::create(player->m_team, player);
-	player->getSprite()->addChild(pop);
-	pop->setPosition(Vec2(20, 20));
-
-	explode();
-	return;
-	}
-
+	//撞上建筑物
 	pos = m_map->standard(pos);
 	if (!m_map->ifCanMove(pos)) 
 	{
@@ -62,7 +43,18 @@ void Bazooka::update(float det)
 			m_map->damage(pos);
 		}
 		explode();
+		return;
 	}
+	//撞上玩家
+	auto player = Player::local_player;
+	Vec2 playerpos = player->getPosition();
+	float distance = (abs(playerpos.x - pos.x) + abs(playerpos.y - pos.y)) / 2;
+
+	if (distance > 5) return;
+	if (player->isgold)return;
+	if (player->isinpop)return;
+	SendMsg_GetHurt();
+	explode();
 }
 
 void Bazooka::explode()
