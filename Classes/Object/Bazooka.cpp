@@ -70,6 +70,7 @@ void Bazooka::explode()
 	Vec2 pos = getPosition();
 	creatWater(pos);
 	unscheduleUpdate();
+	Music::PlayMusic(Music::music::bombExplode);
 	this->removeFromParent();
 }
 

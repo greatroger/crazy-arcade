@@ -29,6 +29,7 @@ void GameScene::start(int mapID)
 	addManager();
 	m_map->start();
 	scheduleUpdate();
+	schedule(schedule_selector(GameScene::walkUpdate), 2.0f);
 }
 
 void GameScene::update(float det)
@@ -41,6 +42,12 @@ void GameScene::update(float det)
 	}
 }
 
+void GameScene::walkUpdate(float tmd)
+{
+	auto player = Player::local_player;
+	auto pos = player->getPosition();
+	SendMsg_Walk(-1, 0, pos.x, pos.y);
+}
 void GameScene::addMap(int mapID)
 {
 	m_map=GameMap::create(mapID);

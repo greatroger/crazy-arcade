@@ -183,14 +183,21 @@ void Player::runAction(MyMap* map)
 		msg_dir = -1;
 	}
 
-	/*if (msg_pos != Vec2(-1, -1))
+	if (msg_pos != Vec2(-1, -1))
 	{
-		if (m_name != Player::local_Username && getPosition()!=msg_pos)
+		if (m_name != Player::local_Username)
 		{
-			m_sprite->setPosition(msg_pos);
+			auto player = Player::local_player;
+			Vec2 playerpos = player->getPosition();
+
+			float distance = (abs(playerpos.x - msg_pos.x) + abs(playerpos.y - msg_pos.y)) / 2;
+			if (distance>50){
+				if (m_sprite != nullptr)
+				m_sprite->setPosition(msg_pos);
+			}
 		}
 		msg_pos = Vec2(-1, -1);
-	}*/
+	}
 
 	if (msg_walk != 0)
 	{
@@ -209,6 +216,8 @@ void Player::runAction(MyMap* map)
 		bomb->start(msg_bomb,this,map);
 		map->addChild(bomb,1);
 		msg_bomb = Vec2(0, 0);
+		if (this == Player::local_player)
+			Music::PlayMusic(Music::music::setbomb);
 	}
 }
 

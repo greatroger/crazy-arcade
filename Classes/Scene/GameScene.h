@@ -11,6 +11,7 @@ public:
 	void start(int mapID);
 	void update(float delta);
 private:
+	void walkUpdate(float tmd);
 	void addMap(int mapID);
 	void addSprite();
 	void addManager();

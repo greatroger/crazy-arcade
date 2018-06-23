@@ -22,7 +22,7 @@ Pop::~Pop()
 Pop* Pop::create(int type, Player* player)
 {
 	Pop* pop = new Pop(type, player);
-	std::string path = Path::picPop;
+	std::string path = Path::picPop[0];
 	if (pop && pop->initWithFile(path))
 	{
 		pop->autorelease();
@@ -50,21 +50,30 @@ void Pop::update(float det)
 
 void Pop::puncturePop(int team)
 {
-	if (team == m_team)
+	this->setTexture(Path::picPop[1]);
+	auto act1 = DelayTime::create(0.1f);
+	auto act2 = CallFunc::create([this]()
 	{
-	}
-	else
-	{
-		m_player->msg_ishurt = true;
-	}
+		this->setTexture(Path::picPop[2]);
+	});
+	runAction(Sequence::create(act1, act2, nullptr));
 
-	assert(m_player->isinpop = true);
-	m_player->isinpop = false;
-	audioPlay();
-	this->removeFromParent();
+	auto act3 = DelayTime::create(0.15f);
+	auto act4 = CallFunc::create([this,team]()
+	{
+		if (team == m_team)
+		{
+			Music::PlayMusic(Music::music::poplive);
+		}
+		else
+		{
+			Music::PlayMusic(Music::music::popdie);
+			m_player->msg_ishurt = true;
+		}
+		assert(m_player->isinpop = true);
+		m_player->isinpop = false;
+		this->removeFromParent();
+	});
+	runAction(Sequence::create(act3, act4, nullptr));
 }
 
-void Pop::audioPlay()
-{
-
-}

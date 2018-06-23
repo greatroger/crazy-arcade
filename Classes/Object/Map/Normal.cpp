@@ -42,6 +42,8 @@ void Normal::checkOver()
 	if (Msg::Game.isgameOver)
 	{
 		Msg::Game.isgameOver = false;
+		Music::stopMusic();
+		Music::PlayMusic(Music::music::win);
 		Sleep(500);
 		auto roomScene = RoomScene::create();
 		Director::getInstance()->replaceScene(TransitionFade::create(1, roomScene));

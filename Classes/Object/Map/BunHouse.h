@@ -20,12 +20,13 @@ private:
 	void checkEat();
 	void checkDead();
 	void reborn(Player * player);
+	bool ifInHouse(cocos2d::Vec2 pos, int team);
 	int m_maxBunNum;
-
+protected:
 	cocos2d::Vec2 bornPlace[4] = {
-		cocos2d::Vec2(20 + 22 * 40,660),
-		cocos2d::Vec2(100,60),
-		cocos2d::Vec2(0,0),
-		cocos2d::Vec2(0,0),
+		cocos2d::Vec2(140,380-40),
+		cocos2d::Vec2(900,380 - 40),
+		cocos2d::Vec2(140,380+40),
+		cocos2d::Vec2(900,380 + 40),
 	};
 };

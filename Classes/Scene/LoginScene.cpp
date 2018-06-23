@@ -70,6 +70,10 @@ void LoginScene::checkLogin()
 		TipsLayer->setContentText("There has something worong with the server, you can try another IP address", 30, 30, 200);
 		this->addChild(TipsLayer, 5);
 		break;
+	case 4:
+		TipsLayer->setContentText("The game has started, you can try again later", 30, 30, 200);
+		this->addChild(TipsLayer, 5);
+		break;
 	}
 }
 

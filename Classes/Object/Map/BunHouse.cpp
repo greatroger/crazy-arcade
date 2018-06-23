@@ -7,9 +7,8 @@ USING_NS_CC;
 
 bool BunHouse::init()
 {
-	m_bunpos[0] = Vec2(220, 180);
-	m_bunpos[1] = Vec2(780, 660);
-	m_bunpos[0] = Vec2(780 + 40+40, 420);
+	m_bunpos[0] = Vec2(300, 380);
+	m_bunpos[1] = Vec2(660, 380);
 	m_maxBunNum = 3;
 	return true;
 }
@@ -85,7 +84,7 @@ void BunHouse::checkEat()
 	auto pos = player->getPosition();
 
 	//来到敌方包子铺
-	if (pos == m_bunpos[oppteam] && bunType == -1 && bunNum[oppteam]<m_maxBunNum)
+	if (ifInHouse(pos,oppteam) && bunType == -1 && bunNum[oppteam]<m_maxBunNum)
 	{
 		SendMsg_PickupBun(Player::local_Username, 0, oppteam);
 		++bunNum[oppteam];
@@ -99,7 +98,7 @@ void BunHouse::checkEat()
 	}
 
 	//回到自己的包子铺
-	if (pos == m_bunpos[team])
+	if (ifInHouse(pos,team))
 	{
 		if (bunType == -1) return;
 		if (bunType == team)
@@ -165,6 +164,17 @@ void BunHouse::reborn(Player* player)
 	player->spriteInit();
 	player->isdead = false;
 	auto sprite = player->getSprite();
-	sprite->setPosition(bornPlace[player->m_team]);
+	sprite->setPosition(bornPlace[player->getRoomID()]);
 	sprite->setVisible(true);
+}
+
+bool BunHouse::ifInHouse(Vec2 pos,int team)
+{
+	const int size = getTileSize().width;
+	if (pos == m_bunpos[team])return true;
+	if (pos.x == m_bunpos[team].x + size && pos.y == m_bunpos[team].y) return true;
+	if (pos.x == m_bunpos[team].x - size && pos.y == m_bunpos[team].y) return true;
+	if (pos.x == m_bunpos[team].x  && pos.y == m_bunpos[team].y + size) return true;
+	if (pos.x == m_bunpos[team].x  && pos.y == m_bunpos[team].y - size) return true;
+	return false;
 }

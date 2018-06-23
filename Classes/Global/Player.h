@@ -21,6 +21,7 @@ public:
 		auto player = new Player(name);
 		return player;
 	}
+
 	cocos2d::Sprite* createSprite();
 	void runAction(MyMap* );
 	void addLife(const int & life);

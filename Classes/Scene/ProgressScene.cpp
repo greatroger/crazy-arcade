@@ -20,6 +20,7 @@ bool ProgressScene::init()
 void ProgressScene::start(int ID)
 {
 	m_mapID = ID;
+	Music::stopMusic();
 	scheduleOnce(schedule_selector(ProgressScene::updateEachSecond5), 1.0f);
 	scheduleOnce(schedule_selector(ProgressScene::updateEachSecond4), 2.0f);
 	scheduleOnce(schedule_selector(ProgressScene::updateEachSecond3), 3.0f);

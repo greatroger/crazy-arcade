@@ -150,6 +150,7 @@ void GameController::startSpaceListener()
 		if (keycode == EventKeyboard::KeyCode::KEY_SPACE)
 		{
 			if (m_player->isdead) return;
+			if (m_player->isinpop) return;
 			if (m_player->getPropType() != -1)
 			{
 				SendMsg_UseProp(m_player->getName(), m_player->getPropType());

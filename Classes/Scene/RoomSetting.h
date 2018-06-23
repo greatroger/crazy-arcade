@@ -12,7 +12,7 @@ public:
 	void checkStart();
 	void addBackground();
 	void onTouchEnter(Ref * pSender, cocos2d::ui::Widget::TouchEventType type);
-	void changeMap();
+	void changeMap(int mapID);
 	void createReadyButton();
 	void createMapButton();
 	void menuMapCallback(cocos2d::Ref * pSender);

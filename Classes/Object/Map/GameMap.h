@@ -6,7 +6,7 @@
 namespace GameMap
 {
 	enum map {
-		Village, Tomb, BunHouse
+		Village, Ice, Tomb,BunHouse
 	};
 	MyMap* create(int mapID);
 

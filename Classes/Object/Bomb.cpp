@@ -56,6 +56,9 @@ void Bomb::explode()
 	Vec2 pos = getPosition();
 	hurtPlayer(pos);
 	creatWater(pos);
+	
+	Music::PlayMusic(Music::music::bombExplode);
+
 	//将自己从炸弹队列移除
 	for (auto it = bombList.begin(); it != bombList.end(); ++it)
 	{
@@ -142,9 +145,9 @@ void Bomb::hurtPlayer(Vec2 pos)
 	{
 		auto player = it->second;
 		Vec2 playerpos = player->getPosition();
-		float distance = (abs(playerpos.x - pos.x) + abs(playerpos.y - pos.y)) / 2;
+		playerpos = m_map->standard(playerpos);
 
-		if (distance>5) continue;
+		if (playerpos != pos) continue;
 		if (player->isgold)continue;
 		if (player->isinpop)continue;
 

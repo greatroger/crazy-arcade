@@ -18,7 +18,7 @@ bool RoomSetting::init()
 {
 	m_mapID = 0;
 	m_modeID = 0;
-	Msg::Room.ismapchange = false;
+	Msg::Room.mapID = 0;
 	Msg::Room.ismodechange = false;
 	addBackground();
 	createReadyButton();
@@ -32,9 +32,8 @@ bool RoomSetting::init()
 
 void RoomSetting::update(float det)
 {
-	if (Msg::Room.ismapchange){
-		changeMap();
-		Msg::Room.ismapchange = false;
+	if (Msg::Room.mapID!=m_mapID){
+		changeMap(Msg::Room.mapID);
 	}
 	 
 	if (Msg::Room.ismodechange){
@@ -103,10 +102,10 @@ void RoomSetting::onTouchEnter(Ref *pSender, cocos2d::ui::Widget::TouchEventType
 	SendMsg_Ready();
 }
 
-void RoomSetting::changeMap()
+void RoomSetting::changeMap(int mapID)
 {
 	if( getChildByTag(1)!=nullptr ) removeChildByTag(1);
-	m_mapID = (m_mapID + 1) % Setting::MaxMapNum;
+	m_mapID = mapID;
 	auto map = TMXTiledMap::create(Path::picMap[m_mapID]);
 	assert(map != nullptr);
 	map->setPosition(600, 250);

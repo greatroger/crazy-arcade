@@ -7,7 +7,7 @@ namespace Path {
 	namespace Player
 	{
 		constexpr char* colour[] = {
-			"red","blue","fat","bee","strong","purple","nannan","dragon","captain"
+			"red","blue","fat","bee","strong","purple","nannan","cute","dragon","captain"
 		};
 		constexpr char picGold[] = "Player/gold.png";
 
@@ -54,6 +54,7 @@ namespace Path {
 
 	constexpr char* picMap[] = {
 		"Map/village/village.tmx",
+		"Map/ice/ice.tmx",
 		"Map/tomb/tomb.tmx",
 		"Map/bunHouse/bunHouse.tmx"
 	};
@@ -66,23 +67,29 @@ namespace Path {
 		"Prop/stopwatch .png",
 	};
 	constexpr char* picBun[] = {
-		"Prop/bun.png",
-		"Prop/bun.png",
+		"Prop/redbun.png",
+		"Prop/bluebun.png",
 	};
 
-	constexpr char picPop[] = "Prop/pop1.png";
+	constexpr char* picPop[] = {
+		"Player/pop.png",
+		"Player/popbreak2.png",
+		"Player/popbreak1.png",
+	};
+
 	constexpr char picBazooka[] = "Prop/bazooka.png";
 	constexpr char picBawater[] = "Prop/bawater.png";
 }
 
 namespace Setting {
-	constexpr int MaxMapNum = 3;
+	constexpr int MaxMapNum = 4;
 	extern bool musicSwitch;
 }
 
 namespace Music {
 	enum music {
-		main,room,eatProp,setbomb,explode,win,start,tomb,village,bun,stopwatch
+		main,room,eatProp,setbomb,bombExplode,win,start,tomb,village,ice,bunHouse,stopwatch,poplive,popdie,_max
 	};
 	void PlayMusic(music type);
+	void stopMusic();
 }

@@ -1,6 +1,9 @@
 #include "GameMap.h"
 #include"Object/Map/BunHouse.h"
 #include"Object/Map/Normal.h"
+#include"Object/Map/Tomb.h"
+#include"Object/Map/Ice.h"
+#include"Global/Global.h"
 USING_NS_CC;
 
 MyMap* GameMap::create(int mapID)
@@ -10,10 +13,16 @@ MyMap* GameMap::create(int mapID)
 	default:
 		break;
 	case Village:
+		Music::PlayMusic(Music::music::village);
 		return Normal::create(Path::picMap[Village]);
 	case Tomb:
-		return Normal::create(Path::picMap[Tomb]);
+		Music::PlayMusic(Music::music::tomb);
+		return Tomb::create(Path::picMap[Tomb]);
+	case Ice:
+		Music::PlayMusic(Music::music::ice);
+		return Ice::create(Path::picMap[Ice]);
 	case BunHouse:
+		Music::PlayMusic(Music::music::bunHouse);
 		return BunHouse::create(Path::picMap[BunHouse]);
 	}
 	return nullptr;

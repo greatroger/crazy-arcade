@@ -12,5 +12,6 @@ private:
 	bool load();
 	void endLoad(float dt);
 	void addBackground();
+	void MusicLoad();
 };
 

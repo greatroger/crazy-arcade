@@ -12,13 +12,13 @@ public:
 	~Normal();
 	MAP_CREATE_FUN(Normal);
 	bool init();
-	void start();
+virtual	void start();
 	void update(float det);
 	void checkOver();
 	void checkDead();
 	void DeadAudioPlay();
 	void reborn(Player * player);
-private:
+protected:
 	cocos2d::Vec2 bornPlace[4] = {
 		cocos2d::Vec2(20,20),
 		cocos2d::Vec2(20,740),

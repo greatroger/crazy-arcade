@@ -16,8 +16,7 @@ LoadingScene::~LoadingScene()
 bool LoadingScene::init()
 {
 	addBackground();
-	if (load())
-	{
+	if (load()){
 	   scheduleOnce(CC_SCHEDULE_SELECTOR(LoadingScene::endLoad), 0.5);
 	}
 	return true;

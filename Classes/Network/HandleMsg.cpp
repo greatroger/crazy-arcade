@@ -158,7 +158,7 @@ static void handle_ChangeMap(Json::Value& msg)
 {
 	std::string name = msg["Name"].asString();
 	int mapID = msg["Number"].asInt();
-	Msg::Room.ismapchange = true;
+	Msg::Room.mapID = mapID;
 }
 
 static void handle_ChangeMode(Json::Value& msg)

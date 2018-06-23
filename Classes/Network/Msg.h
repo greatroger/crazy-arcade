@@ -37,7 +37,8 @@ struct Msg_Player
 
 struct Msg_Room
 {
-	bool ismapchange, ismodechange;
+	bool ismodechange;
+	int  mapID;
 };
 
 struct Msg_Login
