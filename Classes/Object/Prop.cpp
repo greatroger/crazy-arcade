@@ -4,6 +4,7 @@
 #include"Network/Msg.h"
 USING_NS_CC;
 
+std::list<Bun*> Bun::bunList;
 Prop::Prop(int type):m_type(type)
 {
 	scheduleUpdate();
@@ -66,26 +67,30 @@ Bun* Bun::create(int type)
 
 void Bun::update(float det)
 {
-	Vec2 pos = this->getPosition();
-	FOR_ALL_PLAYERS
-	{
-		auto player = it->second;
-	    if (player->getBunType() != -1)return;
+	//检测本地玩家是否拾取包子
+	Vec2 bunpos = this->getPosition();
+	auto player = Player::local_player;
 
-		Vec2 playerpos = player->getPosition();
-		float distance = (abs(playerpos.x - pos.x) + abs(playerpos.y - pos.y)) / 2;
-	    if (distance<10)
-	    {
-		   getBun(player,m_type);
-		   this->removeFromParent();
-		   break;
-	    }
+	Vec2 playerpos = player->getPosition();
+	float distance = (abs(playerpos.x - bunpos.x) + abs(playerpos.y - bunpos.y)) / 2;
+	if (distance < 10 && player->getBunType() == -1)
+	{
+		SendMsg_PickupBun(false, m_type,bunpos);
+		player->setBunType(-1);
 	}
+
+	//根据网络消息移除包子
+	/*Vec2 msg_pos = player->Msg.PickupBun.pos;
+	if (bunpos == msg_pos)
+	{
+		player->Msg.PickupBun.pos = Vec2(-1, -1);
+		this->removeFromParent();
+	}*/
 }
 
 void Bun::getBun(Player *player,int type)
 {
-	assert(player->getBunType() == -1);
+	//assert(player->getBunType() == -1);
 	player->addSpeed(m_speed);
 	player->setBunType(type);
 	auto bun = Sprite::create("Prop/bun.png");
@@ -95,7 +100,7 @@ void Bun::getBun(Player *player,int type)
 
 void Bun::loseBun(Player * player)
 {
-	if (player->getBunType() == -1) return;
+//	if (player->getBunType() == -1) return;
 	player->addSpeed(-m_speed);
 	player->setBunType(-1);
 	player->getSprite()->removeChildByTag(1);

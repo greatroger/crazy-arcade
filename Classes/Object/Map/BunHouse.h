@@ -14,13 +14,14 @@ private:
 	bool init();
 	void start();
 	void update(float det);
-	void checkOver();
-	void checkBun();
+	void checkPickupBun();
+	void checkLoseBun();
 	void checkEat();
 	void checkDead();
 	void reborn(Player * player);
 	bool ifInHouse(cocos2d::Vec2 pos, int team);
 	int m_maxBunNum;
+    int m_bunNum[2] = { 0,0 };
 protected:
 	cocos2d::Vec2 bornPlace[4] = {
 		cocos2d::Vec2(140,380-40),

@@ -29,8 +29,6 @@ bool Player::init()
 	msg_createprop_pos = Vec2(0, 0);
 	msg_createprop_type = -1;
 	msg_pickupProp = -1;
-	msg_pickupBun = -1;
-	msg_bunType = -1;
 	msg_useProp = -1;
 	m_life = 2;
 	m_bombNum = 0;

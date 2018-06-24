@@ -22,6 +22,7 @@ public:
 	void update(float det);
 	static void getBun(Player* player, int type);
 	static void loseBun(Player* player);
+	static std::list<Bun*> bunList;
 private:
 	int m_type;
 	constexpr static float m_speed = 0.2f;

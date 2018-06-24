@@ -20,6 +20,7 @@ void handle_ChangeMap(Json::Value& msg);
 void handle_CreateProp(Json::Value& msg);
 void handle_Chat(Json::Value& msg);
 void handle_PickupProp(Json::Value& msg);
+void handle_LoseBun(Json::Value& msg);
 void handle_PickupBun(Json::Value& msg);
 void handle_UseProp(Json::Value& msg);
 void handle_Start(Json::Value& msg);
@@ -64,6 +65,7 @@ void MsgLoad()
 	registerMsg("Chat", handle_Chat);
 	registerMsg("PickupProp", handle_PickupProp);
 	registerMsg("PickupBun", handle_PickupBun);
+	registerMsg("LoseBun", handle_LoseBun);
 	registerMsg("UseProp", handle_UseProp);
 	registerMsg("Start", handle_Start);
 	registerMsg("GameOver", handle_GameOver);
@@ -189,10 +191,30 @@ static void handle_PickupProp(Json::Value& msg)
 static void handle_PickupBun(Json::Value& msg)
 {
 	std::string name = msg["Name"].asString();
-	int type = msg["Type"].asInt();
+	bool n = msg["IsFromHouse"].asBool();
 	int bunType = msg["BunType"].asInt();
-	Player::Players[name]->msg_pickupBun = type;
-	Player::Players[name]->msg_bunType = bunType;
+	Vec2 pos;
+	pos.x = msg["X"].asInt();
+	pos.y = msg["Y"].asInt();
+
+	Player::Players[name]->Msg.PickupBun.bunType = bunType;
+	Player::Players[name]->Msg.PickupBun.isFromHouse = n;
+	Player::Players[name]->Msg.PickupBun.pos = pos;
+	cout << "PickupBun  " << name << endl;
+}
+
+static void handle_LoseBun(Json::Value& msg)
+{
+	std::string name = msg["Name"].asString();
+	bool n = msg["IsFromHouse"].asBool();
+	int bunType = msg["BunType"].asInt();
+	Vec2 pos;
+	pos.x = msg["X"].asInt();
+	pos.y = msg["Y"].asInt();
+
+	Player::Players[name]->Msg.LoseBun.bunType = bunType;
+	Player::Players[name]->Msg.LoseBun.isFromHouse = n;
+	Player::Players[name]->Msg.LoseBun.pos = pos;
 	cout << "PickupBun  " << name << endl;
 }
 

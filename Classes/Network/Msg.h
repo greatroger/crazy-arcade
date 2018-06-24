@@ -15,7 +15,8 @@ void SendMsg_ChangeSprite(std::string&name );
 void SendMsg_ChangeMap(int mapID);
 void SendMsg_ChangeMode(int modeID);
 void SendMsg_PickupProp(std::string& name, int type);
-void SendMsg_PickupBun(std::string& name, int type,int bunType);
+void SendMsg_PickupBun(bool isFromHouse,int bunType, cocos2d::Vec2 pos);
+void SendMsg_LoseBun(bool isFromHouse, int bunType,cocos2d::Vec2 pos);
 void SendMsg_CreateProp(int x, int y,int type);
 void SendMsg_DamageMap(int x,int y);
 void SendMsg_UseProp(std::string& name,int type);
@@ -35,7 +36,15 @@ private:
 		int step=0;
 		int dir=-1;
 	};
+	struct msg_Bun
+	{
+		bool isFromHouse=false;
+		int bunType=-1;
+		cocos2d::Vec2 pos = cocos2d::Vec2(-1, -1);
+	};
 public:
+
+	msg_Bun PickupBun,LoseBun;
 	cocos2d::Vec2  msg_bomb;
 	std::string msg_chat;
 	int msg_pickupProp, msg_useProp;

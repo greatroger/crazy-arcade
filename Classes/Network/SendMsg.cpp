@@ -68,18 +68,33 @@ void SendMsg_PickupProp(std::string& name,int type)
 }
 
 
-void SendMsg_PickupBun(std::string& name, int type,int bunType)
+void SendMsg_PickupBun(bool isFromHouse,int bunType, cocos2d::Vec2 pos)
 {
 	Json::Value data, writedata;
 	Json::FastWriter writer;
-	writedata["Name"] = name;
-	writedata["Type"] = type;
+	writedata["Name"] = Player::local_Username;
+	writedata["IsFromHouse"] = isFromHouse;
 	writedata["BunType"] = bunType;
+	writedata["X"] = int(pos.x);
+	writedata["Y"] = int(pos.y);
 	data["PickupBun"] = writedata;
 	std::string senddata = writer.write(data);
 	SendMsg(senddata);
 }
 
+void SendMsg_LoseBun(bool isFromHouse, int bunType,cocos2d::Vec2 pos)
+{
+	Json::Value data, writedata;
+	Json::FastWriter writer;
+	writedata["Name"] = Player::local_Username;
+	writedata["IsFromHouse"] = isFromHouse;
+	writedata["BunType"] = bunType;
+	writedata["X"] = int(pos.x);
+	writedata["Y"] = int(pos.y);
+	data["LoseBun"] = writedata;
+	std::string senddata = writer.write(data);
+	SendMsg(senddata);
+}
 void SendMsg_Hello(std::string& name)
 {
 	Json::Value data, writedata;

@@ -53,7 +53,7 @@ public:
 
 	cocos2d::Vec2  msg_bomb;
 	std::string msg_chat;
-	int msg_pickupProp,msg_useProp, msg_pickupBun,msg_bunType;
+	int msg_pickupProp, msg_useProp;
 	cocos2d::Vec2 msg_createprop_pos;
 	int msg_createprop_type;
 	bool msg_ishurt;

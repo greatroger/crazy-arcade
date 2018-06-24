@@ -10,6 +10,8 @@ bool BunHouse::init()
 	m_bunpos[0] = Vec2(300, 380);
 	m_bunpos[1] = Vec2(660, 380);
 	m_maxBunNum = 3;
+	m_bunNum[0] = 0;
+	m_bunNum[1] = 0;
 	return true;
 }
 
@@ -27,56 +29,94 @@ void BunHouse::start()
 
 void BunHouse::update(float det)
 {
-	checkOver();
 	checkDead();
 	checkEat();
-	checkBun();
+	checkLoseBun();
+	checkPickupBun();
 }
 
-void BunHouse::checkOver()
+
+void BunHouse::checkPickupBun()
 {
-	if (Msg::Game.isgameOver)
-	{
-		Msg::Game.isgameOver = false;
-		Sleep(500);
-		auto roomScene = RoomScene::create();
-		Director::getInstance()->replaceScene(TransitionFade::create(1, roomScene));
+	//每帧根据网络消息检查玩家是否拾取包子
+	FOR_ALL_PLAYERS{
+		auto player = it->second;
+		bool isFromHouse = player->Msg.PickupBun.isFromHouse;
+		int bunType = player->Msg.PickupBun.bunType;
+		Vec2 pos = player->Msg.PickupBun.pos;
+
+		if (bunType == -1) continue;
+		player->Msg.PickupBun.bunType=-1;
+
+		int team = player->m_team;
+		int oppteam = (team + 1) % 2;
+		//从敌方包子铺夺取包子
+		if (isFromHouse)
+		{
+			assert(pos == m_bunpos[oppteam]);
+			assert(bunType == oppteam);
+			++m_bunNum[oppteam];
+			m_bunNum[oppteam] += m_maxBunNum;
+			auto act1 = DelayTime::create(5.0f);
+			auto act2 = CallFunc::create([this, oppteam]()
+			{
+				m_bunNum[oppteam] -= m_maxBunNum;
+			});
+			runAction(Sequence::create(act1, act2, nullptr));
+		}
+		else // 从地上拾取包子
+		{
+			for (auto it = Bun::bunList.begin(); it != Bun::bunList.end(); ++it)
+			{
+				auto bunpos = (*it)->getPosition();
+				if (bunpos == pos)
+				{
+					(*it)->removeFromParent();
+					Bun::bunList.erase(it);
+					player->Msg.PickupBun.pos = Vec2(-1, -1);
+					break;
+				}
+			}
+		}
+		Bun::getBun(player, bunType);	
 	}
 }
-
-void BunHouse::checkBun()
+void BunHouse::checkLoseBun()
 {
 	FOR_ALL_PLAYERS{
 		auto player = it->second;
-	    int type = player->msg_pickupBun;
-		int bunType = player->msg_bunType;
+	bool isFromHouse = player->Msg.LoseBun.isFromHouse;
+	Vec2 pos = player->Msg.LoseBun.pos;
+	int bunType = player->Msg.LoseBun.bunType;
 
-	    if (type == -1) continue;
-		if (bunType == -1) continue;
-	    player->msg_pickupBun = -1;
-		player->msg_bunType = -1;
+	if (bunType == -1) continue;
+	player->Msg.LoseBun.bunType = -1;
+	
+	int team = player->m_team;
+	int oppteam = (team + 1) % 2;
+	if (isFromHouse) //把包子放回自家包子铺
+	{
+		assert(pos == m_bunpos[team]);
 
-
-		switch (type)
+		//包子是友方的
+		if (bunType == team)
 		{
-		default:
-			break;
-		case -1:
-			break;
-		case 0:
-			Bun::getBun(player, bunType);
-			break;
-		case 1:
-			Bun::loseBun(player);
-			break;
+			--m_bunNum[team];
 		}
-
+	}  
+	else // 由于死亡而导致包子掉落
+	{
+		auto bun = Bun::create(bunType);
+		bun->setPosition(pos);
+		addChild(bun, 20);
+		Bun::bunList.push_back(bun);
+	}
+	Bun::loseBun(player);
 	}
 }
 
 void BunHouse::checkEat()
 {
-	static int bunNum[2] = { 0,0 };
 	auto player = Player::local_player;
 	int bunType = player->getBunType();
 	int team = player->m_team;
@@ -84,17 +124,10 @@ void BunHouse::checkEat()
 	auto pos = player->getPosition();
 
 	//来到敌方包子铺
-	if (ifInHouse(pos,oppteam) && bunType == -1 && bunNum[oppteam]<m_maxBunNum)
+	if (ifInHouse(pos,oppteam) && bunType == -1 && m_bunNum[oppteam]<m_maxBunNum)
 	{
-		SendMsg_PickupBun(Player::local_Username, 0, oppteam);
-		++bunNum[oppteam];
-		bunNum[oppteam] += m_maxBunNum;
-		auto act1 = DelayTime::create(5.0f);
-		auto act2 = CallFunc::create([this,oppteam]()
-		{
-			bunNum[oppteam] -= m_maxBunNum;
-		});
-		runAction(Sequence::create(act1, act2, nullptr));
+		SendMsg_PickupBun(true,oppteam,m_bunpos[oppteam]);
+		player->setBunType(oppteam);
 	}
 
 	//回到自己的包子铺
@@ -103,13 +136,14 @@ void BunHouse::checkEat()
 		if (bunType == -1) return;
 		if (bunType == team)
 		{
-			--bunNum[team];
-			SendMsg_PickupBun(Player::local_Username, 1, team);
+			SendMsg_LoseBun(true,team,m_bunpos[team]);
+			player->setBunType(-1);
 		}
 
 		if (bunType == oppteam)
 		{
-			SendMsg_PickupBun(Player::local_Username, 1, oppteam);
+			SendMsg_LoseBun(true,oppteam,m_bunpos[team]);
+			player->setBunType(-1);
 			SendMsg_GetBunScore(team);
 		}
 	}
@@ -130,12 +164,9 @@ void BunHouse::checkDead()
 			player->isdead = true;
 
 			//包子掉落
-			if (bunType != -1)
-			{
-				auto bun = Bun::create(bunType);
-				bun->setPosition(player->getPosition());
-				addChild(bun, 20);
-				Bun::loseBun(player);
+			if (bunType != -1 && player==Player::local_player)	{
+				SendMsg_LoseBun(false,bunType,player->getPosition());
+				player->setBunType(-1);
 			}
 			//玩家的死亡与复活
 		    sprite->setVisible(false);
@@ -147,7 +178,7 @@ void BunHouse::checkDead()
 				addChild(deadlayer, 100);
 				GameMap::DeadAudioPlay(deadlayer);
 			}
-
+		
 		    auto act1 = DelayTime::create(4.0f);
 			auto act2 = CallFunc::create([this,player]()
 		    {
