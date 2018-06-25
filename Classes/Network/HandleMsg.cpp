@@ -5,7 +5,8 @@
 #include<assert.h>
 #include<mutex>
 
-#pragma comment(lib, "json_vc71_libmtd.lib")
+//#pragma comment(lib, "json_vc71_libmtd.lib")
+#pragma comment(lib, "jsoncpp.lib")
 using cocos2d::Vec2;
 using namespace std;
 
@@ -71,8 +72,6 @@ void MsgLoad()
 	registerMsg("GameOver", handle_GameOver);
 	registerMsg("StopConnect", handle_StopConnect);
 	registerMsg("GetHurt", handle_GetHurt);
-	/*
-	registerMsg("Dead", handle_Dead);*/
 }
 
 static void handle_Hello(Json::Value& msg)

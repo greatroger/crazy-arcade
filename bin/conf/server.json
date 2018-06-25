@@ -1,6 +1,0 @@
-{
-	"LogLevel": "debug",
-	"LogPath": "",
-	"TCPAddr": "180.160.13.162:3563",
-	"MaxConnNum": 20000
-}

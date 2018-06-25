@@ -17,6 +17,7 @@ bool BunHouse::init()
 
 void BunHouse::start()
 {
+	//设置玩家出生位置以及队伍
 	FOR_ALL_PLAYERS
 	{
 		auto player = it->second;
@@ -81,6 +82,8 @@ void BunHouse::checkPickupBun()
 		Bun::getBun(player, bunType);	
 	}
 }
+
+//每帧根据网络消息检查玩家是否掉落包子
 void BunHouse::checkLoseBun()
 {
 	FOR_ALL_PLAYERS{
@@ -115,6 +118,8 @@ void BunHouse::checkLoseBun()
 	}
 }
 
+
+//每帧判断本地玩家是否进入包子铺
 void BunHouse::checkEat()
 {
 	auto player = Player::local_player;
@@ -149,6 +154,7 @@ void BunHouse::checkEat()
 	}
 
 }
+
 
 void BunHouse::checkDead()
 {
@@ -189,6 +195,7 @@ void BunHouse::checkDead()
 	}
 }
 
+//玩家复活
 void BunHouse::reborn(Player* player)
 {
 	if (player == nullptr) return;
@@ -199,6 +206,7 @@ void BunHouse::reborn(Player* player)
 	sprite->setVisible(true);
 }
 
+//判断是否在包子铺里
 bool BunHouse::ifInHouse(Vec2 pos,int team)
 {
 	const int size = getTileSize().width;

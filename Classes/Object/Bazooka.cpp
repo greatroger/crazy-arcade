@@ -31,7 +31,6 @@ void Bazooka::update(float det)
 	for (auto it = bombList.begin(); it != bombList.end(); ++it) {
 		if ((*it)->getPosition() == pos) {
 			explode();
-			(*it)->explode();
 			return;
 		}
 	}
@@ -59,6 +58,7 @@ void Bazooka::update(float det)
 
 void Bazooka::explode()
 {
+	//»ð¼ý±¬Õ¨
 	Vec2 pos = getPosition();
 	creatWater(pos);
 	unscheduleUpdate();

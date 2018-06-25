@@ -31,7 +31,6 @@ public:
     virtual	void removeNomove(cocos2d::Vec2 pos);
     virtual	void damage(cocos2d::Vec2 pos);
 	cocos2d::Vec2 standard(cocos2d::Vec2 pos);
-	virtual int RandProp();
 	virtual void start() {};
 	bool ifInScene(cocos2d::Vec2);
 	void setOrder(cocos2d::Scene *);

@@ -8,10 +8,10 @@ public:
 	Pop(Player* player);
 	~Pop();
 	static Pop* create(Player* player);
-	void update(float det);
-static	void getInPop(Player * player);
+    static void getInPop(Player * player);
 	void puncturePop(int team);
 private:
+	void update(float det);
 	int m_team;
 	Player* m_player;
 };

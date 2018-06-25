@@ -41,6 +41,7 @@ void Prop::update(float det)
 		{
 			SendMsg_PickupProp(name, m_type);
 			this->removeFromParent();
+			Sleep(10);
 		}
 	}
 }
@@ -77,15 +78,8 @@ void Bun::update(float det)
 	{
 		SendMsg_PickupBun(false, m_type,bunpos);
 		player->setBunType(-1);
+		Sleep(10);
 	}
-
-	//根据网络消息移除包子
-	/*Vec2 msg_pos = player->Msg.PickupBun.pos;
-	if (bunpos == msg_pos)
-	{
-		player->Msg.PickupBun.pos = Vec2(-1, -1);
-		this->removeFromParent();
-	}*/
 }
 
 void Bun::getBun(Player *player,int type)

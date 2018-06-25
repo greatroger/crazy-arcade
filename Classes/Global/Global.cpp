@@ -14,6 +14,10 @@ void Music::PlayMusic(music type)
 	case Music::main:
 		SimpleAudioEngine::getInstance()->playBackgroundMusic("Music/mainScene.mp3", true);
 		break;
+	case Music::login:
+		SimpleAudioEngine::getInstance()->playBackgroundMusic("Music/login.wav", true);
+		SimpleAudioEngine::getInstance()->setEffectsVolume(1);
+		break;
 	case Music::room:
 		SimpleAudioEngine::getInstance()->playBackgroundMusic("Music/roomScene.mp3", true);
 		break;

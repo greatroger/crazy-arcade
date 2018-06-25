@@ -1,6 +1,7 @@
 #include"Object/Map/MyMap.h"
 #include"Network/Msg.h"
 #include"Object/Prop.h"
+#include"Controller/PropManager.h"
 USING_NS_CC;
 
 MyMap::MyMap()
@@ -112,12 +113,14 @@ void MyMap::damage(Vec2 pos)
 	assert(ifCanDamage(pos));
 	if (!ifCanDamage(pos)) return;
 
-	int propType = RandProp();
+	//随机产生道具
+	int propType =PropManager::RandProp();
 	if (propType != -1)
 	{
 		SendMsg_CreateProp(tileCoord.x, tileCoord.y, propType);
 	}
 
+	//破坏地图物体
 	removeNomove(pos);
 	m_removeLayer->removeTileAt(tileCoord);
 	m_buildingLayer->removeTileAt(tileCoord);
@@ -129,60 +132,12 @@ void MyMap::damage(Vec2 pos)
 	m_building_topLayer->removeTileAt(tileCoord);
 }
 
+//标准化坐标
 Vec2 MyMap::standard(Vec2 pos)
 {
 	return tileCoordToPosition(positionToTileCoord(pos));
 }
 
-int MyMap::RandProp()
-{
-	const int item_breed = Prop::Type::MaxNum; //道具种类
-	static const int item_breedMaxNumber[item_breed] = { 10,20,20,5,3 }; //对于每种道具所能存在的最大数目
-	static int item_matrix[item_breed] = { 0,0,0,0,0 };	//已经产生了的道具数量
-
-	static int breed = 0;
-	breed=(breed + 71) % 101;
-	static int bol5 = 0;
-	bol5 = (bol5 + 1) % 5;
-	if (bol5 == 0) return -1;
-	static bool bol2 = true;
-	static int last = -1;
-
-	srand((unsigned)time(NULL));
-
-	int n = (rand()+breed*23) % 100;
-	int m = (n + breed) % item_breed;
-
-	//不产生道具
-	if (n <50) return -1;    
-	if (!bol2)
-	{
-		bol2 = true;
-		return -1;
-	}
-
-	int change = 0;  //已经产生完的道具类型数
-	while (true)
-	{
-		if (change >= item_breed) break;
-
-		if (item_matrix[m] >= item_breedMaxNumber[m])	++change;
-
-		if (item_matrix[m] < item_breedMaxNumber[m])
-		{
-			if (last != m)
-			{
-				last = m;
-				++item_matrix[m];
-				bol2 = false;
-				return m;
-			}
-		}
-			
-		m = (m + 1) % item_breed;
-	}
-	return -1;
-}
 
 bool MyMap::ifCanDamage(Vec2 pos)
 {

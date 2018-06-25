@@ -5,6 +5,7 @@
 #include"Global/Player.h"
 #include"Network/Msg.h"
 #include"Scene/Room/PopupLayer.h"
+#include"Scene/StartScene.h"
 
 USING_NS_CC;
 
@@ -12,7 +13,7 @@ USING_NS_CC;
 LoginScene::LoginScene()
 {
 }
-
+ 
 
 LoginScene::~LoginScene()
 {
@@ -23,15 +24,38 @@ bool LoginScene::init()
 	addBackground();
 	addInputBox();
 	addLoginButton();
+	createBackButton();
 	scheduleUpdate();
 	return true;
 }
 
 void LoginScene::addBackground()
 {
-
+	auto visiblesize = Director::getInstance()->getVisibleSize();
+	auto background = Sprite::create("Scene/Login/background.jpg");
+	assert(background != nullptr);
+	background->setPosition(visiblesize.width / 2, visiblesize.height / 2);
+	background->setScale(2.1f);
+	addChild(background, -1);
 }
 
+void LoginScene::createBackButton()
+{
+	auto back = MenuItemLabel::create(
+		Label::createWithTTF("Back", "fonts/Quicksand-Bold.ttf", 50),
+		CC_CALLBACK_1(LoginScene::menuBackCallback, this));
+	back->setPosition(90, 680);
+	back->setColor(ccc3(255, 245, 247));
+	auto menu = Menu::create();
+	menu->addChild(back, 0);
+	menu->setPosition(0, 0);
+	addChild(menu, 3);
+}
+
+void LoginScene::menuBackCallback(cocos2d::Ref * pSender)
+{
+	Director::getInstance()->replaceScene(TransitionFade::create(0.6, StartScene::create()));
+}
 
 void LoginScene::update(float det)
 {
@@ -44,7 +68,8 @@ void LoginScene::checkLogin()
 	Msg::Login.loginFeedbackType = -1;
 	if (type == -1) return;
 
-	printf("%d", type);
+	isConnecting = false;
+
 	auto  TipsLayer = PopupLayer::create("Scene/Room/c8.png");
 	TipsLayer->setContentSize(CCSizeMake(500, 300));
 	TipsLayer->setTitle("Tip", 25);
@@ -112,19 +137,9 @@ void LoginScene:: addLoginButton()
 
 	loginButton->addTouchEventListener([=](Ref* sender, ui::Widget::TouchEventType type)
 	{
-
 		if (type != ui::Widget::TouchEventType::ENDED) return;
-		/*Player::local_Username = "55";
-		if (StartClient("55", "127.0.0.01") > 0)
-		{
-			Sleep(500);
-			auto roomScene = RoomScene::create();
-			Director::getInstance()->replaceScene(TransitionFade::create(0.1, roomScene));
-			
-		}
-		return;*/
+		if (isConnecting) return;
 
-		if (type != ui::Widget::TouchEventType::ENDED) return;
 		auto username = usernameInput->getText();
 		auto IPAddress = IPAddressInput->getText();
 		if (username[0]==0 ||IPAddress[0]==0 )
@@ -136,6 +151,7 @@ void LoginScene:: addLoginButton()
 			Player::local_Username = username;
 			if (StartClient(username, IPAddress) > 0)
 			{
+				isConnecting = true;
 			}
 			else
 			{

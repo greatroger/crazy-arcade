@@ -3,6 +3,10 @@
 #include"Object/Map/MyMap.h"
 #include"Network/Msg.h"
 
+//人物类
+//存储了所有玩家的游戏数据
+//包含了游戏数据修改的方法
+
 class Player:public cocos2d::Node
 {
 public:
@@ -20,6 +24,7 @@ public:
 	static Player *create(const std::string& name)
 	{
 		auto player = new Player(name);
+		player->init();
 		return player;
 	}
 

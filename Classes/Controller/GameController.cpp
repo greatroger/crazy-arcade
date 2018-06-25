@@ -42,6 +42,7 @@ void GameController::startWalkListener()
 		if (keycode == S) { SETKEY(s) }
 		if (keycode == D) { SETKEY(d) }
 		if (keycode == A) { SETKEY(a) }
+		Sleep(10);
 	};
 
 	listener->onKeyReleased = [this](EventKeyboard::KeyCode keycode, Event * event) {
@@ -53,6 +54,7 @@ void GameController::startWalkListener()
 		if (keycode == S) { m_bkey.s = false; }
 		if (keycode == D) { m_bkey.d = false; }
 		if (keycode == A) { m_bkey.a = false; }
+		Sleep(10);
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	schedule(schedule_selector(GameController::walkUpdate),m_player->getSpeed()+0.01);
@@ -151,17 +153,10 @@ void GameController::startSpaceListener()
 		{
 			if (m_player->isdead) return;
 			if (m_player->isinpop) return;
-			if (m_player->getPropType() != -1)
-			{
-				SendMsg_UseProp(m_player->getName(), m_player->getPropType());
-			}
-			else
-			{
-				Vec2 pos = m_player->getPosition();
-				pos = m_map->tileCoordToPosition(m_map->positionToTileCoord(pos));
-				if (!ifcanBomb(pos)) return;
-				SendMsg_Bomb(pos.x, pos.y);
-			}
+			Vec2 pos = m_player->getPosition();
+			pos = m_map->tileCoordToPosition(m_map->positionToTileCoord(pos));
+			if (!ifcanBomb(pos)) return;
+			SendMsg_Bomb(pos.x, pos.y);
 			Sleep(50);
 		}
 	};
@@ -180,6 +175,24 @@ void GameController::startKeyEListener()
 			if (m_player->isdead)return;
 			SendMsg_UseProp(m_player->getName(),Prop::Type::stopwatch);
 			Sleep(50);
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+}
+
+void GameController::startKeyQListener()
+{
+	auto listener = EventListenerKeyboard::create();
+	listener->onKeyPressed = [this](EventKeyboard::KeyCode keycode, Event * event) {
+		if (keycode == EventKeyboard::KeyCode::KEY_Q)
+		{
+			if (m_player->isdead) return;
+			if (m_player->isinpop) return;
+			if (m_player->getPropType() != -1)
+			{
+				SendMsg_UseProp(m_player->getName(), m_player->getPropType());
+				Sleep(50);
+			}
 		}
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);

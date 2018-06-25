@@ -3,6 +3,9 @@
 #include"Object/Map/MyMap.h"
 #include"Global/Player.h"
 
+//炸弹类
+//包含炸弹的产生与销毁，以及对玩家造成伤害的函数
+
 class Bomb : public cocos2d::Sprite
 {
 public:

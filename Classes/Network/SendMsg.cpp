@@ -2,9 +2,10 @@
 #include "json/json.h"
 #include"Client.h"
 #include"Global/Player.h"
-#pragma comment(lib, "json_vc71_libmtd.lib")
+//#pragma comment(lib, "json_vc71_libmtd.lib")
+#pragma comment(lib, "jsoncpp.lib")
+//本文件实现了游戏消息发送函数
 
-//std::map<std::string, Msg_Player*> Msg::Players;
 Msg_Room Msg::Room;
 Msg_Game Msg::Game;
 Msg_Login Msg::Login;

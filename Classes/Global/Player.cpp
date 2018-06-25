@@ -10,12 +10,10 @@ USING_NS_CC;
 
 Player::Player(const std::string& name):m_name(name)
 {
-	init();
 }
 
 Player::~Player()
 {
-
 }
 
 
@@ -38,7 +36,6 @@ bool Player::init()
 	m_team = -1;
 	ischange = false;
 	spriteInit();
-	scheduleUpdate();
 	return true;
 }
 
@@ -182,7 +179,7 @@ void Player::runAction(MyMap* map)
 				setDirection(msg_dir);
 			}
 
-			if (msg_pos != Vec2(-1, -1)) 
+		/*	if (msg_pos != Vec2(-1, -1)) 
 			{
 				Vec2 playerpos =getPosition();
 				float distance = (abs(playerpos.x - msg_pos.x) + abs(playerpos.y - msg_pos.y)) / 2;
@@ -190,7 +187,7 @@ void Player::runAction(MyMap* map)
 						m_sprite->setPosition(msg_pos);
 				}
 			}
-
+			*/
 			if (msg_step != 0)
 			{
 				Vec2 walk = getDirection()*msg_step;

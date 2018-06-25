@@ -24,9 +24,9 @@ private:
     int m_bunNum[2] = { 0,0 };
 protected:
 	cocos2d::Vec2 bornPlace[4] = {
-		cocos2d::Vec2(140,380-40),
-		cocos2d::Vec2(900,380 - 40),
-		cocos2d::Vec2(140,380+40),
-		cocos2d::Vec2(900,380 + 40),
+		cocos2d::Vec2(140,340),
+		cocos2d::Vec2(900,340),
+		cocos2d::Vec2(140,420),
+		cocos2d::Vec2(900,420),
 	};
 };

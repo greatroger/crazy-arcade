@@ -77,7 +77,7 @@ void GameScene::addManager()
 	this->addChild(Controller);
 
 	auto propManager = PropManager::create();
-	propManager->start(m_map,Controller);
+	propManager->start(m_map);
 	this->addChild(propManager);
 }
 

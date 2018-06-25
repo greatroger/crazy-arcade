@@ -1,10 +1,9 @@
 #include <WinSock2.h>
 #include<iostream>
 #include <process.h>
-#include<cstdio>
 #include"Client.h"
 #include"cocos2d.h"
-#include"Msg.h"
+#include"NetWork/Msg.h"
 #include"Global/Player.h"
 #pragma comment(lib,"ws2_32.lib")
 

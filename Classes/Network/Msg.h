@@ -2,7 +2,8 @@
 #include<iostream>
 #include"cocos2d.h"
 #include<mutex>
-
+//本文件定义了所有游戏消息结构体
+//包含游戏消息的发送函数
 
 void SendMsg_Hello(std::string&);
 void SendMsg_Walk(int dir, int step, int x, int y);

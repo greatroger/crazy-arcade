@@ -56,7 +56,8 @@ void Bomb::explode()
 	Vec2 pos = getPosition();
 	hurtPlayer(pos);
 	creatWater(pos);
-	
+	m_player->addBombNum(-1);
+
 	Music::PlayMusic(Music::music::bombExplode);
 
 	//将自己从炸弹队列移除
@@ -75,7 +76,6 @@ void Bomb::explode()
 		m_map->damage(pos);
 	}
 
-	m_player->addBombNum(-1);
 
 	//一个炸弹的四个方向的爆炸
 	Remove(0, 1);

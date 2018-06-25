@@ -2,6 +2,9 @@
 #include"cocos2d.h"
 #include<iostream>
 
+//全局文件
+//包含所有资源的路径
+//包含游戏音乐的管理
 namespace Path {
 
 	namespace Player
@@ -88,7 +91,7 @@ namespace Setting {
 
 namespace Music {
 	enum music {
-		main,room,eatProp,setbomb,bombExplode,win,start,tomb,village,ice,bunHouse,stopwatch,poplive,popdie,_max
+		main,login,room,eatProp,setbomb,bombExplode,win,start,tomb,village,ice,bunHouse,stopwatch,poplive,popdie,_max
 	};
 	void PlayMusic(music type);
 	void stopMusic();
